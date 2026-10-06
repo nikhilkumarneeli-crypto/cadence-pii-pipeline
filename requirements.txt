@@ -1,0 +1,8 @@
+python-docx
+pdfplumber
+PyMuPDF
+python-pptx
+presidio-analyzer
+presidio-anonymizer
+spacy
+streamlit
