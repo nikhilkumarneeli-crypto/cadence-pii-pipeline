@@ -1,0 +1,42 @@
+{
+  "file_name": "test5_charts_pii.pptx",
+  "total_slides": 2,
+  "total_text_blocks": 2,
+  "total_tables": 0,
+  "total_table_cells": 0,
+  "total_charts": 2,
+  "total_speaker_notes": 0,
+  "total_images": 0,
+  "expected_titles": [
+    "Third-Party Assessment Progress by Tier",
+    "Division Security Remediation"
+  ],
+  "expected_chart_data": [
+    {
+      "title": "2026 Vendor Assessments by Tier",
+      "categories": [
+        "Tier 1 High Risk",
+        "Tier 2 Moderate Risk",
+        "Tier 3 Low Risk"
+      ],
+      "series": [
+        "Completed Reviews",
+        "Pending Reviews"
+      ]
+    },
+    {
+      "title": "Remediation SLA Compliance %",
+      "categories": [
+        "Treasury",
+        "Operations",
+        "Technology",
+        "Risk"
+      ],
+      "series": [
+        "SLA Compliant",
+        "Past Due"
+      ]
+    }
+  ],
+  "expected_pii_entities": []
+}

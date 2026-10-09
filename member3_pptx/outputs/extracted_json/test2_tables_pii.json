@@ -1,0 +1,1403 @@
+{
+  "file_name": "test2_tables_pii.pptx",
+  "total_slides": 2,
+  "extracted_slides": 2,
+  "total_blocks": 36,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 22,
+      "titles": [],
+      "has_tables": true,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01",
+        "slide_1_group_02",
+        "slide_1_group_03",
+        "slide_1_group_04",
+        "slide_1_group_05"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 14,
+      "titles": [],
+      "has_tables": true,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_2_group_01",
+        "slide_2_group_02",
+        "slide_2_group_03",
+        "slide_2_group_04"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_tbl1_r0_c0",
+      "s1_tbl_1",
+      "s1_tbl1_r0_c1",
+      "s1_tbl1_r0_c2",
+      "s1_tbl1_r0_c3"
+    ],
+    "slide_1_group_02": [
+      "s1_tbl1_r1_c0",
+      "s1_tbl1_r1_c2",
+      "s1_tbl1_r1_c3",
+      "s1_tbl1_r1_c1"
+    ],
+    "slide_1_group_03": [
+      "s1_tbl1_r2_c0",
+      "s1_tbl1_r2_c1",
+      "s1_tbl1_r2_c2",
+      "s1_tbl1_r2_c3"
+    ],
+    "slide_1_group_04": [
+      "s1_tbl1_r3_c0",
+      "s1_tbl1_r3_c2",
+      "s1_tbl1_r3_c3",
+      "s1_tbl1_r3_c1"
+    ],
+    "slide_1_group_05": [
+      "s1_tbl1_r4_c0",
+      "s1_tbl1_r4_c1",
+      "s1_tbl1_r4_c2",
+      "s1_tbl1_r4_c3"
+    ],
+    "slide_2_group_01": [
+      "s2_b23_sh2",
+      "s2_tbl1_r0_c0",
+      "s2_tbl_1",
+      "s2_tbl1_r0_c1",
+      "s2_tbl1_r0_c2"
+    ],
+    "slide_2_group_02": [
+      "s2_tbl1_r1_c0",
+      "s2_tbl1_r1_c1",
+      "s2_tbl1_r1_c2"
+    ],
+    "slide_2_group_03": [
+      "s2_tbl1_r2_c0",
+      "s2_tbl1_r2_c1",
+      "s2_tbl1_r2_c2"
+    ],
+    "slide_2_group_04": [
+      "s2_tbl1_r3_c0",
+      "s2_tbl1_r3_c1",
+      "s2_tbl1_r3_c2"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Vendor Management Directory",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Vendor Management Directory"
+      ]
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r0_c0",
+      "block_type": "table_cell",
+      "text": "Vendor Contact",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 0,
+        "is_header": true,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl_1",
+      "block_type": "table",
+      "text": "Vendor Contact | Role | Email | Phone\nArthur Pendelton | Primary Onboarding Lead | a.pendelton@fintechvendor.example | +1 (555) 789-0123\nBeatrice Moreno | Technical Account Manager | b.moreno@cloudresilience.example | +1 (555) 789-0124\nChen Wei | SOC 2 Lead Auditor | w.chen@securityassessors.example | +1 (555) 789-0125\nDaria Kowalski | Escalation Manager | d.kowalski@paymentgateway.example | +1 (555) 789-0126",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 216.0
+      },
+      "order": 3,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "rows_count": 5,
+        "columns_count": 4,
+        "cells": [
+          {
+            "row": 0,
+            "column": 0,
+            "text": "Vendor Contact",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 1,
+            "text": "Role",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 2,
+            "text": "Email",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 3,
+            "text": "Phone",
+            "is_header": true
+          },
+          {
+            "row": 1,
+            "column": 0,
+            "text": "Arthur Pendelton",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 1,
+            "text": "Primary Onboarding Lead",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 2,
+            "text": "a.pendelton@fintechvendor.example",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 3,
+            "text": "+1 (555) 789-0123",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 0,
+            "text": "Beatrice Moreno",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 1,
+            "text": "Technical Account Manager",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 2,
+            "text": "b.moreno@cloudresilience.example",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 3,
+            "text": "+1 (555) 789-0124",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 0,
+            "text": "Chen Wei",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 1,
+            "text": "SOC 2 Lead Auditor",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 2,
+            "text": "w.chen@securityassessors.example",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 3,
+            "text": "+1 (555) 789-0125",
+            "is_header": false
+          },
+          {
+            "row": 4,
+            "column": 0,
+            "text": "Daria Kowalski",
+            "is_header": false
+          },
+          {
+            "row": 4,
+            "column": 1,
+            "text": "Escalation Manager",
+            "is_header": false
+          },
+          {
+            "row": 4,
+            "column": 2,
+            "text": "d.kowalski@paymentgateway.example",
+            "is_header": false
+          },
+          {
+            "row": 4,
+            "column": 3,
+            "text": "+1 (555) 789-0126",
+            "is_header": false
+          }
+        ]
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r0_c1",
+      "block_type": "table_cell",
+      "text": "Role",
+      "position": {
+        "left": 208.8,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 4,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 1,
+        "is_header": true,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r0_c2",
+      "block_type": "table_cell",
+      "text": "Email",
+      "position": {
+        "left": 360.0,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 5,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 2,
+        "is_header": true,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r0_c3",
+      "block_type": "table_cell",
+      "text": "Phone",
+      "position": {
+        "left": 511.2,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 6,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 3,
+        "is_header": true,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r1_c0",
+      "block_type": "table_cell",
+      "text": "Arthur Pendelton",
+      "position": {
+        "left": 57.6,
+        "top": 151.2,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 7,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r1_c1",
+      "block_type": "table_cell",
+      "text": "Primary Onboarding Lead",
+      "position": {
+        "left": 208.8,
+        "top": 151.2,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 8,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r1_c2",
+      "block_type": "table_cell",
+      "text": "a.pendelton@fintechvendor.example",
+      "position": {
+        "left": 360.0,
+        "top": 151.2,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 9,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r1_c3",
+      "block_type": "table_cell",
+      "text": "+1 (555) 789-0123",
+      "position": {
+        "left": 511.2,
+        "top": 151.2,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 10,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r2_c0",
+      "block_type": "table_cell",
+      "text": "Beatrice Moreno",
+      "position": {
+        "left": 57.6,
+        "top": 194.4,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 11,
+      "context_group_id": "slide_1_group_03",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r2_c1",
+      "block_type": "table_cell",
+      "text": "Technical Account Manager",
+      "position": {
+        "left": 208.8,
+        "top": 194.4,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 12,
+      "context_group_id": "slide_1_group_03",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r2_c2",
+      "block_type": "table_cell",
+      "text": "b.moreno@cloudresilience.example",
+      "position": {
+        "left": 360.0,
+        "top": 194.4,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 13,
+      "context_group_id": "slide_1_group_03",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r2_c3",
+      "block_type": "table_cell",
+      "text": "+1 (555) 789-0124",
+      "position": {
+        "left": 511.2,
+        "top": 194.4,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 14,
+      "context_group_id": "slide_1_group_03",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r3_c0",
+      "block_type": "table_cell",
+      "text": "Chen Wei",
+      "position": {
+        "left": 57.6,
+        "top": 237.6,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 15,
+      "context_group_id": "slide_1_group_04",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r3_c1",
+      "block_type": "table_cell",
+      "text": "SOC 2 Lead Auditor",
+      "position": {
+        "left": 208.8,
+        "top": 237.6,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 16,
+      "context_group_id": "slide_1_group_04",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r3_c2",
+      "block_type": "table_cell",
+      "text": "w.chen@securityassessors.example",
+      "position": {
+        "left": 360.0,
+        "top": 237.6,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 17,
+      "context_group_id": "slide_1_group_04",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r3_c3",
+      "block_type": "table_cell",
+      "text": "+1 (555) 789-0125",
+      "position": {
+        "left": 511.2,
+        "top": 237.6,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 18,
+      "context_group_id": "slide_1_group_04",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r4_c0",
+      "block_type": "table_cell",
+      "text": "Daria Kowalski",
+      "position": {
+        "left": 57.6,
+        "top": 280.8,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 19,
+      "context_group_id": "slide_1_group_05",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 4,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r4_c1",
+      "block_type": "table_cell",
+      "text": "Escalation Manager",
+      "position": {
+        "left": 208.8,
+        "top": 280.8,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 20,
+      "context_group_id": "slide_1_group_05",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 4,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r4_c2",
+      "block_type": "table_cell",
+      "text": "d.kowalski@paymentgateway.example",
+      "position": {
+        "left": 360.0,
+        "top": 280.8,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 21,
+      "context_group_id": "slide_1_group_05",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 4,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_tbl1_r4_c3",
+      "block_type": "table_cell",
+      "text": "+1 (555) 789-0126",
+      "position": {
+        "left": 511.2,
+        "top": 280.8,
+        "width": 151.2,
+        "height": 43.2
+      },
+      "order": 22,
+      "context_group_id": "slide_1_group_05",
+      "source_type": "table",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 4,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 5,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b23_sh2",
+      "block_type": "text_box",
+      "text": "Internal TPRM Reviewers Table",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 23,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Internal TPRM Reviewers Table"
+      ]
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c0",
+      "block_type": "table_cell",
+      "text": "Reviewer Name",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 24,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 0,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl_1",
+      "block_type": "table",
+      "text": "Reviewer Name | Department | Work Email\nEthan Gallagher | Third-Party Risk | e.gallagher@cadencefg.example\nFatima Al-Mansoor | Information Security | f.almansoor@cadencefg.example\nGabriel Santos | Legal & Contracts | g.santos@cadencefg.example",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 187.2
+      },
+      "order": 25,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "rows_count": 4,
+        "columns_count": 3,
+        "cells": [
+          {
+            "row": 0,
+            "column": 0,
+            "text": "Reviewer Name",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 1,
+            "text": "Department",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 2,
+            "text": "Work Email",
+            "is_header": true
+          },
+          {
+            "row": 1,
+            "column": 0,
+            "text": "Ethan Gallagher",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 1,
+            "text": "Third-Party Risk",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 2,
+            "text": "e.gallagher@cadencefg.example",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 0,
+            "text": "Fatima Al-Mansoor",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 1,
+            "text": "Information Security",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 2,
+            "text": "f.almansoor@cadencefg.example",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 0,
+            "text": "Gabriel Santos",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 1,
+            "text": "Legal & Contracts",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 2,
+            "text": "g.santos@cadencefg.example",
+            "is_header": false
+          }
+        ]
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c1",
+      "block_type": "table_cell",
+      "text": "Department",
+      "position": {
+        "left": 259.2,
+        "top": 108.0,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 26,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 1,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c2",
+      "block_type": "table_cell",
+      "text": "Work Email",
+      "position": {
+        "left": 460.8,
+        "top": 108.0,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 27,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 2,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c0",
+      "block_type": "table_cell",
+      "text": "Ethan Gallagher",
+      "position": {
+        "left": 57.6,
+        "top": 154.8,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 28,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c1",
+      "block_type": "table_cell",
+      "text": "Third-Party Risk",
+      "position": {
+        "left": 259.2,
+        "top": 154.8,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 29,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c2",
+      "block_type": "table_cell",
+      "text": "e.gallagher@cadencefg.example",
+      "position": {
+        "left": 460.8,
+        "top": 154.8,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 30,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c0",
+      "block_type": "table_cell",
+      "text": "Fatima Al-Mansoor",
+      "position": {
+        "left": 57.6,
+        "top": 201.6,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 31,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c1",
+      "block_type": "table_cell",
+      "text": "Information Security",
+      "position": {
+        "left": 259.2,
+        "top": 201.6,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 32,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c2",
+      "block_type": "table_cell",
+      "text": "f.almansoor@cadencefg.example",
+      "position": {
+        "left": 460.8,
+        "top": 201.6,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 33,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c0",
+      "block_type": "table_cell",
+      "text": "Gabriel Santos",
+      "position": {
+        "left": 57.6,
+        "top": 248.4,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 34,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c1",
+      "block_type": "table_cell",
+      "text": "Legal & Contracts",
+      "position": {
+        "left": 259.2,
+        "top": 248.4,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 35,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    },
+    {
+      "file": "test2_tables_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c2",
+      "block_type": "table_cell",
+      "text": "g.santos@cadencefg.example",
+      "position": {
+        "left": 460.8,
+        "top": 248.4,
+        "width": 201.6,
+        "height": 46.8
+      },
+      "order": 36,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 3
+      }
+    }
+  ]
+}

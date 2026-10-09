@@ -1,0 +1,106 @@
+{
+  "file_name": "test2_tables_pii.pptx",
+  "total_slides": 2,
+  "total_text_blocks": 2,
+  "total_tables": 2,
+  "total_table_cells": 32,
+  "total_charts": 0,
+  "total_speaker_notes": 0,
+  "total_images": 0,
+  "expected_titles": [
+    "Vendor Management Directory",
+    "Internal TPRM Reviewers Table"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Arthur Pendelton",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "a.pendelton@fintechvendor.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 789-0123",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Beatrice Moreno",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "b.moreno@cloudresilience.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 789-0124",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Chen Wei",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "w.chen@securityassessors.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 789-0125",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Daria Kowalski",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "d.kowalski@paymentgateway.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 789-0126",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Ethan Gallagher",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "e.gallagher@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Fatima Al-Mansoor",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "f.almansoor@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Gabriel Santos",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "g.santos@cadencefg.example",
+      "slide": 2
+    }
+  ]
+}

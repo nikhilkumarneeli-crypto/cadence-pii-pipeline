@@ -1,0 +1,201 @@
+{
+  "file_name": "test1_text_boxes_pii.pptx",
+  "total_slides": 2,
+  "extracted_slides": 2,
+  "total_blocks": 5,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 3,
+      "titles": [
+        "Cadence Executive Committee"
+      ],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01",
+        "slide_1_group_02"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 2,
+      "titles": [
+        "Cadence Compliance Officers"
+      ],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_2_group_01",
+        "slide_2_group_02"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2"
+    ],
+    "slide_1_group_02": [
+      "s1_b2_sh3",
+      "s1_b3_sh4"
+    ],
+    "slide_2_group_01": [
+      "s2_b4_sh2"
+    ],
+    "slide_2_group_02": [
+      "s2_b5_sh3"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test1_text_boxes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "title",
+      "text": "Cadence Executive Committee",
+      "position": {
+        "left": 57.6,
+        "top": 43.2,
+        "width": 604.8,
+        "height": 72.0
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Cadence Executive Committee"
+      ]
+    },
+    {
+      "file": "test1_text_boxes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b2_sh3",
+      "block_type": "text_box",
+      "text": "Eleanor Vance\nManaging Director, Global Treasury\nEmail: e.vance@cadencefg.example\nDirect: +1 (555) 234-8901 | ID: CFG-EXEC-0101",
+      "position": {
+        "left": 57.6,
+        "top": 129.6,
+        "width": 288.0,
+        "height": 158.4
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Eleanor Vance",
+        "Managing Director, Global Treasury",
+        "Email: e.vance@cadencefg.example",
+        "Direct: +1 (555) 234-8901 | ID: CFG-EXEC-0101"
+      ]
+    },
+    {
+      "file": "test1_text_boxes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b3_sh4",
+      "block_type": "text_box",
+      "text": "Julian Thorne\nHead of Operational Resilience\nEmail: j.thorne@cadencefg.example\nDirect: +1 (555) 234-8902 | ID: CFG-EXEC-0102",
+      "position": {
+        "left": 374.4,
+        "top": 129.6,
+        "width": 288.0,
+        "height": 158.4
+      },
+      "order": 3,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 4,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Julian Thorne",
+        "Head of Operational Resilience",
+        "Email: j.thorne@cadencefg.example",
+        "Direct: +1 (555) 234-8902 | ID: CFG-EXEC-0102"
+      ]
+    },
+    {
+      "file": "test1_text_boxes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b4_sh2",
+      "block_type": "title",
+      "text": "Cadence Compliance Officers",
+      "position": {
+        "left": 57.6,
+        "top": 43.2,
+        "width": 604.8,
+        "height": 72.0
+      },
+      "order": 4,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Cadence Compliance Officers"
+      ]
+    },
+    {
+      "file": "test1_text_boxes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b5_sh3",
+      "block_type": "text_box",
+      "text": "Siddharth Rao - VP, AML & Sanctions\nContact: s.rao@cadencefg.example | Phone: +1 (555) 345-6789\nClaire Dupont - Director, Data Privacy\nContact: c.dupont@cadencefg.example | Phone: +1 (555) 345-6790",
+      "position": {
+        "left": 57.6,
+        "top": 129.6,
+        "width": 604.8,
+        "height": 324.0
+      },
+      "order": 5,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Siddharth Rao - VP, AML & Sanctions",
+        "Contact: s.rao@cadencefg.example | Phone: +1 (555) 345-6789",
+        "Claire Dupont - Director, Data Privacy",
+        "Contact: c.dupont@cadencefg.example | Phone: +1 (555) 345-6790"
+      ]
+    }
+  ]
+}
