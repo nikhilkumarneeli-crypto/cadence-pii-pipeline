@@ -1,0 +1,133 @@
+{
+  "file_name": "test3_grouped_shapes_pii.pptx",
+  "target_percent": 80.0,
+  "overall_score_percent": 100.0,
+  "status": "PASS",
+  "passed": true,
+  "total_slides": 2,
+  "component_scores": {
+    "slide_preservation": {
+      "component_name": "slide_preservation",
+      "expected_count": 2,
+      "extracted_count": 2,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.25,
+      "weighted_score_percent": 25.0,
+      "description": "Preservation of slide boundaries and counts"
+    },
+    "title_preservation": {
+      "component_name": "title_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Preservation of slide headers and section titles"
+    },
+    "text_block_preservation": {
+      "component_name": "text_block_preservation",
+      "expected_count": 8,
+      "extracted_count": 8,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.25,
+      "weighted_score_percent": 25.0,
+      "description": "Preservation of body text frames and boxes"
+    },
+    "paragraph_preservation": {
+      "component_name": "paragraph_preservation",
+      "expected_count": 8,
+      "extracted_count": 8,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Preservation of discrete paragraph boundaries"
+    },
+    "table_preservation": {
+      "component_name": "table_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Detection and preservation of table structures"
+    },
+    "table_cell_preservation": {
+      "component_name": "table_cell_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Preservation of 2D table cells, rows, and columns"
+    },
+    "chart_text_preservation": {
+      "component_name": "chart_text_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Extraction of titles, categories, and series"
+    },
+    "speaker_notes_preservation": {
+      "component_name": "speaker_notes_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Preservation of slide speaker notes"
+    },
+    "reading_order_preservation": {
+      "component_name": "reading_order_preservation",
+      "expected_count": 8,
+      "extracted_count": 8,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Visual reading-order monotonicity (Kendall's tau)"
+    },
+    "ocr_preservation": {
+      "component_name": "ocr_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Image detection and OCR text extraction coverage"
+    }
+  },
+  "per_slide_evaluations": [
+    {
+      "slide_number": 1,
+      "score_percent": 100.0,
+      "blocks_count": 4,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 2,
+      "score_percent": 100.0,
+      "blocks_count": 4,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    }
+  ],
+  "notes": [
+    "Structure retention (100.0%) exceeds the >= 80.0% threshold."
+  ]
+}

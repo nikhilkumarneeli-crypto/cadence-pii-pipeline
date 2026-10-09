@@ -1,0 +1,218 @@
+{
+  "file_name": "test6_speaker_notes_pii.pptx",
+  "total_slides": 2,
+  "extracted_slides": 2,
+  "total_blocks": 6,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 3,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": true,
+      "context_groups": [
+        "slide_1_group_01",
+        "slide_1_group_02"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 3,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": true,
+      "context_groups": [
+        "slide_2_group_01",
+        "slide_2_group_02"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_b2_sh3"
+    ],
+    "slide_1_group_02": [
+      "s1_notes"
+    ],
+    "slide_2_group_01": [
+      "s2_b4_sh2",
+      "s2_b5_sh3"
+    ],
+    "slide_2_group_02": [
+      "s2_notes"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Board Risk Briefing",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Board Risk Briefing"
+      ]
+    },
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b2_sh3",
+      "block_type": "text_box",
+      "text": "Confidential Quarterly TPRM Review - For Board Eyes Only.",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 144.0
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Confidential Quarterly TPRM Review - For Board Eyes Only."
+      ]
+    },
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_notes",
+      "block_type": "speaker_notes",
+      "text": "CONFIDENTIAL SPEAKER NOTES:\nLead coordinator: Marcus Brody (m.brody@cadencefg.example, +1 (555) 432-1098).\nPlease escalate any direct board queries to Solveig Aarnio before Thursday.",
+      "position": {
+        "left": 0.0,
+        "top": 1000.0,
+        "width": 800.0,
+        "height": 200.0
+      },
+      "order": 3,
+      "context_group_id": "slide_1_group_02",
+      "source_type": "speaker_notes",
+      "slide_id": 256,
+      "shape_id": null,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "CONFIDENTIAL SPEAKER NOTES:",
+        "Lead coordinator: Marcus Brody (m.brody@cadencefg.example, +1 (555) 432-1098).",
+        "Please escalate any direct board queries to Solveig Aarnio before Thursday."
+      ]
+    },
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b4_sh2",
+      "block_type": "text_box",
+      "text": "Internal Audit Findings",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 4,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Internal Audit Findings"
+      ]
+    },
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b5_sh3",
+      "block_type": "text_box",
+      "text": "Remediation Plan for Finding 2025-04: Third-Party Access Reviews.",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 144.0
+      },
+      "order": 5,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Remediation Plan for Finding 2025-04: Third-Party Access Reviews."
+      ]
+    },
+    {
+      "file": "test6_speaker_notes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_notes",
+      "block_type": "speaker_notes",
+      "text": "Audit Lead Contact:\nNina Rostova, Principal Auditor\nEmail: n.rostova@cadencefg.example | Direct: +1 (555) 432-1099",
+      "position": {
+        "left": 0.0,
+        "top": 1000.0,
+        "width": 800.0,
+        "height": 200.0
+      },
+      "order": 6,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "speaker_notes",
+      "slide_id": 257,
+      "shape_id": null,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Audit Lead Contact:",
+        "Nina Rostova, Principal Auditor",
+        "Email: n.rostova@cadencefg.example | Direct: +1 (555) 432-1099"
+      ]
+    }
+  ]
+}

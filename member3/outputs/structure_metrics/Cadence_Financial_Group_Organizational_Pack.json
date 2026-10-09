@@ -1,0 +1,196 @@
+{
+  "file_name": "Cadence_Financial_Group_Organizational_Pack.pptx",
+  "target_percent": 80.0,
+  "overall_score_percent": 100.0,
+  "status": "PASS",
+  "passed": true,
+  "total_slides": 9,
+  "component_scores": {
+    "slide_preservation": {
+      "component_name": "slide_preservation",
+      "expected_count": 9,
+      "extracted_count": 9,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Preservation of slide boundaries and counts"
+    },
+    "title_preservation": {
+      "component_name": "title_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1111,
+      "weighted_score_percent": 11.11,
+      "description": "Preservation of slide headers and section titles"
+    },
+    "text_block_preservation": {
+      "component_name": "text_block_preservation",
+      "expected_count": 149,
+      "extracted_count": 149,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Preservation of body text frames and boxes"
+    },
+    "paragraph_preservation": {
+      "component_name": "paragraph_preservation",
+      "expected_count": 172,
+      "extracted_count": 172,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1111,
+      "weighted_score_percent": 11.11,
+      "description": "Preservation of discrete paragraph boundaries"
+    },
+    "table_preservation": {
+      "component_name": "table_preservation",
+      "expected_count": 3,
+      "extracted_count": 3,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1111,
+      "weighted_score_percent": 11.11,
+      "description": "Detection and preservation of table structures"
+    },
+    "table_cell_preservation": {
+      "component_name": "table_cell_preservation",
+      "expected_count": 224,
+      "extracted_count": 224,
+      "score_percent": 100.0,
+      "configured_weight": 0.15,
+      "effective_weight": 0.1667,
+      "weighted_score_percent": 16.67,
+      "description": "Preservation of 2D table cells, rows, and columns"
+    },
+    "chart_text_preservation": {
+      "component_name": "chart_text_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Extraction of titles, categories, and series"
+    },
+    "speaker_notes_preservation": {
+      "component_name": "speaker_notes_preservation",
+      "expected_count": 0,
+      "extracted_count": 0,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0,
+      "weighted_score_percent": 0.0,
+      "description": "Preservation of slide speaker notes"
+    },
+    "reading_order_preservation": {
+      "component_name": "reading_order_preservation",
+      "expected_count": 385,
+      "extracted_count": 385,
+      "score_percent": 100.0,
+      "configured_weight": 0.1,
+      "effective_weight": 0.1111,
+      "weighted_score_percent": 11.11,
+      "description": "Visual reading-order monotonicity (Kendall's tau)"
+    },
+    "ocr_preservation": {
+      "component_name": "ocr_preservation",
+      "expected_count": 9,
+      "extracted_count": 9,
+      "score_percent": 100.0,
+      "configured_weight": 0.05,
+      "effective_weight": 0.0556,
+      "weighted_score_percent": 5.56,
+      "description": "Image detection and OCR text extraction coverage"
+    }
+  },
+  "per_slide_evaluations": [
+    {
+      "slide_number": 1,
+      "score_percent": 100.0,
+      "blocks_count": 12,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 2,
+      "score_percent": 100.0,
+      "blocks_count": 24,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 3,
+      "score_percent": 100.0,
+      "blocks_count": 30,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 4,
+      "score_percent": 100.0,
+      "blocks_count": 28,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 5,
+      "score_percent": 100.0,
+      "blocks_count": 21,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 6,
+      "score_percent": 100.0,
+      "blocks_count": 83,
+      "has_title": false,
+      "has_table": true,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 7,
+      "score_percent": 100.0,
+      "blocks_count": 86,
+      "has_title": false,
+      "has_table": true,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 8,
+      "score_percent": 100.0,
+      "blocks_count": 91,
+      "has_title": false,
+      "has_table": true,
+      "has_chart": false,
+      "has_notes": false
+    },
+    {
+      "slide_number": 9,
+      "score_percent": 100.0,
+      "blocks_count": 10,
+      "has_title": false,
+      "has_table": false,
+      "has_chart": false,
+      "has_notes": false
+    }
+  ],
+  "notes": [
+    "Structure retention (100.0%) exceeds the >= 80.0% threshold."
+  ]
+}

@@ -1,0 +1,1125 @@
+{
+  "file_name": "test7_mixed_complex_pii.pptx",
+  "total_slides": 6,
+  "extracted_slides": 6,
+  "total_blocks": 30,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 2,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 18,
+      "titles": [],
+      "has_tables": true,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_2_group_01",
+        "slide_2_group_02",
+        "slide_2_group_03",
+        "slide_2_group_04"
+      ]
+    },
+    {
+      "slide_number": 3,
+      "slide_id": 258,
+      "total_blocks": 3,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_3_group_01"
+      ]
+    },
+    {
+      "slide_number": 4,
+      "slide_id": 259,
+      "total_blocks": 2,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": true,
+      "has_notes": false,
+      "context_groups": [
+        "slide_4_group_01"
+      ]
+    },
+    {
+      "slide_number": 5,
+      "slide_id": 260,
+      "total_blocks": 2,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": true,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_5_group_01"
+      ]
+    },
+    {
+      "slide_number": 6,
+      "slide_id": 261,
+      "total_blocks": 3,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": true,
+      "context_groups": [
+        "slide_6_group_01",
+        "slide_6_group_02"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_b2_sh3"
+    ],
+    "slide_2_group_01": [
+      "s2_b3_sh2",
+      "s2_tbl1_r0_c0",
+      "s2_tbl_1",
+      "s2_tbl1_r0_c1",
+      "s2_tbl1_r0_c2",
+      "s2_tbl1_r0_c3"
+    ],
+    "slide_2_group_02": [
+      "s2_tbl1_r1_c0",
+      "s2_tbl1_r1_c2",
+      "s2_tbl1_r1_c3",
+      "s2_tbl1_r1_c1"
+    ],
+    "slide_2_group_03": [
+      "s2_tbl1_r2_c0",
+      "s2_tbl1_r2_c1",
+      "s2_tbl1_r2_c2",
+      "s2_tbl1_r2_c3"
+    ],
+    "slide_2_group_04": [
+      "s2_tbl1_r3_c0",
+      "s2_tbl1_r3_c2",
+      "s2_tbl1_r3_c3",
+      "s2_tbl1_r3_c1"
+    ],
+    "slide_3_group_01": [
+      "s3_b21_sh2",
+      "s3_b22_sh4",
+      "s3_b23_sh5"
+    ],
+    "slide_4_group_01": [
+      "s4_b24_sh2",
+      "s4_img_1"
+    ],
+    "slide_5_group_01": [
+      "s5_b26_sh2",
+      "s5_chart_1"
+    ],
+    "slide_6_group_01": [
+      "s6_b28_sh2",
+      "s6_b29_sh3"
+    ],
+    "slide_6_group_02": [
+      "s6_notes"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Integrated TPRM Oversight Deck",
+      "position": {
+        "left": 57.6,
+        "top": 57.6,
+        "width": 604.8,
+        "height": 72.0
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Integrated TPRM Oversight Deck"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b2_sh3",
+      "block_type": "text_box",
+      "text": "Cadence Financial Group - Governance & Third-Party Assurance Program\nExecutive Contact: Oliver Vance (o.vance@cadencefg.example, +1 (555) 998-1100)",
+      "position": {
+        "left": 57.6,
+        "top": 144.0,
+        "width": 604.8,
+        "height": 108.0
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Cadence Financial Group - Governance & Third-Party Assurance Program",
+        "Executive Contact: Oliver Vance (o.vance@cadencefg.example, +1 (555) 998-1100)"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b3_sh2",
+      "block_type": "text_box",
+      "text": "Vendor Assessment Matrix",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 3,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Vendor Assessment Matrix"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c0",
+      "block_type": "table_cell",
+      "text": "Vendor Name",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 4,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 0,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl_1",
+      "block_type": "table",
+      "text": "Vendor Name | Category | Relationship Lead | Contact Email\nCloudStorage Pro | Hosting | Penelope Cruz-Wood | p.cruzwood@cloudstorage.example\nSecureAuth IDP | IAM & SSO | Quentin Blake | q.blake@secureauth.example\nApex Core Ledger | Core Banking | Rohan Mehta | r.mehta@apexledger.example",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 187.2
+      },
+      "order": 5,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "rows_count": 4,
+        "columns_count": 4,
+        "cells": [
+          {
+            "row": 0,
+            "column": 0,
+            "text": "Vendor Name",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 1,
+            "text": "Category",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 2,
+            "text": "Relationship Lead",
+            "is_header": true
+          },
+          {
+            "row": 0,
+            "column": 3,
+            "text": "Contact Email",
+            "is_header": true
+          },
+          {
+            "row": 1,
+            "column": 0,
+            "text": "CloudStorage Pro",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 1,
+            "text": "Hosting",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 2,
+            "text": "Penelope Cruz-Wood",
+            "is_header": false
+          },
+          {
+            "row": 1,
+            "column": 3,
+            "text": "p.cruzwood@cloudstorage.example",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 0,
+            "text": "SecureAuth IDP",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 1,
+            "text": "IAM & SSO",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 2,
+            "text": "Quentin Blake",
+            "is_header": false
+          },
+          {
+            "row": 2,
+            "column": 3,
+            "text": "q.blake@secureauth.example",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 0,
+            "text": "Apex Core Ledger",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 1,
+            "text": "Core Banking",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 2,
+            "text": "Rohan Mehta",
+            "is_header": false
+          },
+          {
+            "row": 3,
+            "column": 3,
+            "text": "r.mehta@apexledger.example",
+            "is_header": false
+          }
+        ]
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c1",
+      "block_type": "table_cell",
+      "text": "Category",
+      "position": {
+        "left": 208.8,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 6,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 1,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c2",
+      "block_type": "table_cell",
+      "text": "Relationship Lead",
+      "position": {
+        "left": 360.0,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 7,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 2,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r0_c3",
+      "block_type": "table_cell",
+      "text": "Contact Email",
+      "position": {
+        "left": 511.2,
+        "top": 108.0,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 8,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 0,
+        "column": 3,
+        "is_header": true,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c0",
+      "block_type": "table_cell",
+      "text": "CloudStorage Pro",
+      "position": {
+        "left": 57.6,
+        "top": 154.8,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 9,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c1",
+      "block_type": "table_cell",
+      "text": "Hosting",
+      "position": {
+        "left": 208.8,
+        "top": 154.8,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 10,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c2",
+      "block_type": "table_cell",
+      "text": "Penelope Cruz-Wood",
+      "position": {
+        "left": 360.0,
+        "top": 154.8,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 11,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r1_c3",
+      "block_type": "table_cell",
+      "text": "p.cruzwood@cloudstorage.example",
+      "position": {
+        "left": 511.2,
+        "top": 154.8,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 12,
+      "context_group_id": "slide_2_group_02",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 1,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c0",
+      "block_type": "table_cell",
+      "text": "SecureAuth IDP",
+      "position": {
+        "left": 57.6,
+        "top": 201.6,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 13,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c1",
+      "block_type": "table_cell",
+      "text": "IAM & SSO",
+      "position": {
+        "left": 208.8,
+        "top": 201.6,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 14,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c2",
+      "block_type": "table_cell",
+      "text": "Quentin Blake",
+      "position": {
+        "left": 360.0,
+        "top": 201.6,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 15,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r2_c3",
+      "block_type": "table_cell",
+      "text": "q.blake@secureauth.example",
+      "position": {
+        "left": 511.2,
+        "top": 201.6,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 16,
+      "context_group_id": "slide_2_group_03",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 2,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c0",
+      "block_type": "table_cell",
+      "text": "Apex Core Ledger",
+      "position": {
+        "left": 57.6,
+        "top": 248.4,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 17,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 0,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c1",
+      "block_type": "table_cell",
+      "text": "Core Banking",
+      "position": {
+        "left": 208.8,
+        "top": 248.4,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 18,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 1,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c2",
+      "block_type": "table_cell",
+      "text": "Rohan Mehta",
+      "position": {
+        "left": 360.0,
+        "top": 248.4,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 19,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 2,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_tbl1_r3_c3",
+      "block_type": "table_cell",
+      "text": "r.mehta@apexledger.example",
+      "position": {
+        "left": 511.2,
+        "top": 248.4,
+        "width": 151.2,
+        "height": 46.8
+      },
+      "order": 20,
+      "context_group_id": "slide_2_group_04",
+      "source_type": "table",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "table_metadata": {
+        "table_index": 1,
+        "row": 3,
+        "column": 3,
+        "is_header": false,
+        "total_rows": 4,
+        "total_cols": 4
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 3,
+      "section": null,
+      "block_id": "s3_b21_sh2",
+      "block_type": "text_box",
+      "text": "Incident Management Cells",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 21,
+      "context_group_id": "slide_3_group_01",
+      "source_type": "text_box",
+      "slide_id": 258,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Incident Management Cells"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 3,
+      "section": null,
+      "block_id": "s3_b22_sh4",
+      "block_type": "text_box",
+      "text": "Incident Lead: Samantha Sterling",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 324.0,
+        "height": 43.2
+      },
+      "order": 22,
+      "context_group_id": "slide_3_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 258,
+      "shape_id": 4,
+      "parent_group_id": "s3_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Incident Lead: Samantha Sterling"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 3,
+      "section": null,
+      "block_id": "s3_b23_sh5",
+      "block_type": "text_box",
+      "text": "Email: s.sterling@cadencefg.example | Mobile: +1 (555) 998-1122",
+      "position": {
+        "left": 72.0,
+        "top": 158.4,
+        "width": 324.0,
+        "height": 43.2
+      },
+      "order": 23,
+      "context_group_id": "slide_3_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 258,
+      "shape_id": 5,
+      "parent_group_id": "s3_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Email: s.sterling@cadencefg.example | Mobile: +1 (555) 998-1122"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 4,
+      "section": null,
+      "block_id": "s4_b24_sh2",
+      "block_type": "text_box",
+      "text": "Security Authorization & Credential Verification",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 24,
+      "context_group_id": "slide_4_group_01",
+      "source_type": "text_box",
+      "slide_id": 259,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Security Authorization & Credential Verification"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 4,
+      "section": null,
+      "block_id": "s4_img_1",
+      "block_type": "image_ocr",
+      "text": "",
+      "position": {
+        "left": 108.0,
+        "top": 129.6,
+        "width": 360.0,
+        "height": 154.29
+      },
+      "order": 25,
+      "context_group_id": "slide_4_group_01",
+      "source_type": "image_ocr",
+      "slide_id": 259,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 0.0,
+      "paragraphs": [],
+      "ocr_metadata": {
+        "image_index": 1,
+        "format": "png",
+        "ocr_status": "unavailable",
+        "ocr_confidence": 0.0,
+        "ocr_details": {
+          "status": "unavailable",
+          "reason": "tesseract_binary_not_found",
+          "instructions": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal."
+        }
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 5,
+      "section": null,
+      "block_id": "s5_b26_sh2",
+      "block_type": "text_box",
+      "text": "Risk Metrics & Performance",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 26,
+      "context_group_id": "slide_5_group_01",
+      "source_type": "text_box",
+      "slide_id": 260,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Risk Metrics & Performance"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 5,
+      "section": null,
+      "block_id": "s5_chart_1",
+      "block_type": "chart_text",
+      "text": "Chart Title: Quarterly Findings Remediation\nCategories: Critical, High, Medium, Low\nSeries: Open Issues, Remediated",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 576.0,
+        "height": 324.0
+      },
+      "order": 27,
+      "context_group_id": "slide_5_group_01",
+      "source_type": "chart",
+      "slide_id": 260,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "chart_metadata": {
+        "chart_index": 1,
+        "chart_title": "Quarterly Findings Remediation",
+        "categories": [
+          "Critical",
+          "High",
+          "Medium",
+          "Low"
+        ],
+        "series_names": [
+          "Open Issues",
+          "Remediated"
+        ],
+        "axis_titles": [],
+        "limitations": null
+      }
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 6,
+      "section": null,
+      "block_id": "s6_b28_sh2",
+      "block_type": "text_box",
+      "text": "Governance Conclusions & Next Steps",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 28,
+      "context_group_id": "slide_6_group_01",
+      "source_type": "text_box",
+      "slide_id": 261,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Governance Conclusions & Next Steps"
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 6,
+      "section": null,
+      "block_id": "s6_b29_sh3",
+      "block_type": "text_box",
+      "text": "Annual TPRM compliance report ready for Board Audit Committee submission.",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 604.8,
+        "height": 144.0
+      },
+      "order": 29,
+      "context_group_id": "slide_6_group_01",
+      "source_type": "text_box",
+      "slide_id": 261,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Annual TPRM compliance report ready for Board Audit Committee submission."
+      ]
+    },
+    {
+      "file": "test7_mixed_complex_pii.pptx",
+      "slide": 6,
+      "section": null,
+      "block_id": "s6_notes",
+      "block_type": "speaker_notes",
+      "text": "Slide Note: Final review conducted by Ursula Klein (u.klein@cadencefg.example, +1 (555) 998-1144). Approval logged in Governance Register.",
+      "position": {
+        "left": 0.0,
+        "top": 1000.0,
+        "width": 800.0,
+        "height": 200.0
+      },
+      "order": 30,
+      "context_group_id": "slide_6_group_02",
+      "source_type": "speaker_notes",
+      "slide_id": 261,
+      "shape_id": null,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Slide Note: Final review conducted by Ursula Klein (u.klein@cadencefg.example, +1 (555) 998-1144). Approval logged in Governance Register."
+      ]
+    }
+  ]
+}

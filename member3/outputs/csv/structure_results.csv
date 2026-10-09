@@ -1,0 +1,9 @@
+file_name,slides_total,slides_extracted,text_blocks_expected,text_blocks_extracted,tables_expected,tables_extracted,table_cells_expected,table_cells_extracted,charts_detected,chart_text_extracted,speaker_notes_expected,speaker_notes_extracted,images_detected,images_ocr_processed,structure_score_percent,target_percent,status
+Cadence_Financial_Group_Organizational_Pack.pptx,9,9,149,149,3,3,224,224,0,0,0,0,9,9,100.0,80.0,PASS
+test1_text_boxes_pii.pptx,2,2,5,5,0,0,0,0,0,0,0,0,0,0,100.0,80.0,PASS
+test2_tables_pii.pptx,2,2,2,2,2,2,32,32,0,0,0,0,0,0,100.0,80.0,PASS
+test3_grouped_shapes_pii.pptx,2,2,8,8,0,0,0,0,0,0,0,0,0,0,100.0,80.0,PASS
+test4_image_ocr_pii.pptx,1,1,1,1,0,0,0,0,0,0,0,0,2,2,100.0,80.0,PASS
+test5_charts_pii.pptx,2,2,2,2,0,0,0,0,2,2,0,0,0,0,100.0,80.0,PASS
+test6_speaker_notes_pii.pptx,2,2,4,4,0,0,0,0,0,0,2,2,0,0,100.0,80.0,PASS
+test7_mixed_complex_pii.pptx,6,6,10,10,1,1,16,16,1,1,1,1,1,1,100.0,80.0,PASS

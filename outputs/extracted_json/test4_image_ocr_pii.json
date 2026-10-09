@@ -1,0 +1,133 @@
+{
+  "file_name": "test4_image_ocr_pii.pptx",
+  "total_slides": 1,
+  "extracted_slides": 1,
+  "total_blocks": 3,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 3,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": true,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_img_1",
+      "s1_img_2"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test4_image_ocr_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Security Badge & Visitor Pass Scans",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Security Badge & Visitor Pass Scans"
+      ]
+    },
+    {
+      "file": "test4_image_ocr_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_img_1",
+      "block_type": "image_ocr",
+      "text": "",
+      "position": {
+        "left": 57.6,
+        "top": 108.0,
+        "width": 302.4,
+        "height": 135.56
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "image_ocr",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 0.0,
+      "paragraphs": [],
+      "ocr_metadata": {
+        "image_index": 1,
+        "format": "png",
+        "ocr_status": "unavailable",
+        "ocr_confidence": 0.0,
+        "ocr_details": {
+          "status": "unavailable",
+          "reason": "tesseract_binary_not_found",
+          "instructions": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal."
+        }
+      }
+    },
+    {
+      "file": "test4_image_ocr_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_img_2",
+      "block_type": "image_ocr",
+      "text": "",
+      "position": {
+        "left": 381.6,
+        "top": 108.0,
+        "width": 302.4,
+        "height": 125.13
+      },
+      "order": 3,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "image_ocr",
+      "slide_id": 256,
+      "shape_id": 4,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 0.0,
+      "paragraphs": [],
+      "ocr_metadata": {
+        "image_index": 2,
+        "format": "png",
+        "ocr_status": "unavailable",
+        "ocr_confidence": 0.0,
+        "ocr_details": {
+          "status": "unavailable",
+          "reason": "tesseract_binary_not_found",
+          "instructions": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal."
+        }
+      }
+    }
+  ]
+}
