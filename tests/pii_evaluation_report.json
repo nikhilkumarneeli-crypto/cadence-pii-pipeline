@@ -1,0 +1,425 @@
+{
+    "overall": {
+        "true_positives": 23,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+    },
+    "by_type": {
+        "AADHAAR": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "ACCOUNT_NUMBER": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "CARD_NUMBER": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "DATE": {
+            "true_positives": 4,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "DATE_OF_BIRTH": {
+            "true_positives": 2,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "EMAIL": {
+            "true_positives": 3,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "EMPLOYEE_ID": {
+            "true_positives": 2,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "HOME_ADDRESS": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "PAN": {
+            "true_positives": 2,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "PASSPORT": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "PERSON_NAME": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "PHONE": {
+            "true_positives": 3,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        },
+        "SSN": {
+            "true_positives": 1,
+            "false_positives": 0,
+            "false_negatives": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+        }
+    },
+    "per_file": {
+        "indian_pii_standard": {
+            "overall": {
+                "true_positives": 9,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "AADHAAR": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "ACCOUNT_NUMBER": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "DATE_OF_BIRTH": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "EMAIL": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "EMPLOYEE_ID": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PAN": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PASSPORT": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PERSON_NAME": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PHONE": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "international_identifiers": {
+            "overall": {
+                "true_positives": 2,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "CARD_NUMBER": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "SSN": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "date_contexts": {
+            "overall": {
+                "true_positives": 3,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "DATE": {
+                    "true_positives": 2,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "DATE_OF_BIRTH": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "messy_contact_formatting": {
+            "overall": {
+                "true_positives": 2,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "EMAIL": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PHONE": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "address_with_trailing_sentence": {
+            "overall": {
+                "true_positives": 1,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "HOME_ADDRESS": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "ordinary_business_text": {
+            "overall": {
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "by_type": {}
+        },
+        "unlabelled_numeric_values": {
+            "overall": {
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "by_type": {}
+        },
+        "invalid_card_candidate": {
+            "overall": {
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "by_type": {}
+        },
+        "incomplete_identifiers": {
+            "overall": {
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "by_type": {}
+        },
+        "ordinary_date_not_dob": {
+            "overall": {
+                "true_positives": 2,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "DATE": {
+                    "true_positives": 2,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "multiple_pii_types": {
+            "overall": {
+                "true_positives": 4,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0
+            },
+            "by_type": {
+                "EMAIL": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "EMPLOYEE_ID": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PAN": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                },
+                "PHONE": {
+                    "true_positives": 1,
+                    "false_positives": 0,
+                    "false_negatives": 0,
+                    "precision": 1.0,
+                    "recall": 1.0,
+                    "f1": 1.0
+                }
+            }
+        },
+        "ordinary_text_no_pii": {
+            "overall": {
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0
+            },
+            "by_type": {}
+        }
+    }
+}
