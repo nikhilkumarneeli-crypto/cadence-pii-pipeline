@@ -1,0 +1,92 @@
+{
+  "indian_pii_standard": {
+    "text": "Name: Priyanka Raghavan; email: priya@example.com; Employee ID: EMP-40318; DOB: 07/03/2006; PAN: ABCDE1234F; Aadhaar: 2345 6789 0123; Phone: +91 98765 43210; Passport number: K1234567; Account number: 123456789012",
+    "expected": [
+      ["PERSON_NAME", "Priyanka Raghavan"],
+      ["EMAIL", "priya@example.com"],
+      ["EMPLOYEE_ID", "EMP-40318"],
+      ["DATE_OF_BIRTH", "07/03/2006"],
+      ["PAN", "ABCDE1234F"],
+      ["AADHAAR", "2345 6789 0123"],
+      ["PHONE", "+91 98765 43210"],
+      ["PASSPORT", "K1234567"],
+      ["ACCOUNT_NUMBER", "123456789012"]
+    ],
+    "predicted": []
+  },
+  "international_identifiers": {
+    "text": "SSN: 123-45-6789. Test card number: 4111111111111111.",
+    "expected": [
+      ["SSN", "123-45-6789"],
+      ["CARD_NUMBER", "4111111111111111"]
+    ],
+    "predicted": []
+  },
+  "date_contexts": {
+    "text": "Date of Birth: 12/11/2004. Date of Joining: 01/06/2025. Meeting date: 15/09/2026.",
+    "expected": [
+      ["DATE_OF_BIRTH", "12/11/2004"],
+      ["DATE", "01/06/2025"],
+      ["DATE", "15/09/2026"]
+    ],
+    "predicted": []
+  },
+  "messy_contact_formatting": {
+    "text": "Contact email : PRIYA.TEST@example.com ; Mobile: +91-98765-43210.",
+    "expected": [
+      ["EMAIL", "PRIYA.TEST@example.com"],
+      ["PHONE", "+91-98765-43210"]
+    ],
+    "predicted": []
+  },
+  "address_with_trailing_sentence": {
+    "text": "Home address: 24 MG Road, Bengaluru, Karnataka 560001. The meeting is in Bengaluru.",
+    "expected": [
+      ["HOME_ADDRESS", "24 MG Road, Bengaluru, Karnataka 560001"]
+    ],
+    "predicted": []
+  },
+  "ordinary_business_text": {
+    "text": "The quarterly report contains 12345 records and an invoice total of 25000. The project meeting is in Bengaluru.",
+    "expected": [],
+    "predicted": []
+  },
+  "unlabelled_numeric_values": {
+    "text": "Reference values: 12345, 560001, and 25000. No identifiers are labelled in this note.",
+    "expected": [],
+    "predicted": []
+  },
+  "invalid_card_candidate": {
+    "text": "Test card number: 4111111111111112.",
+    "expected": [],
+    "predicted": []
+  },
+  "incomplete_identifiers": {
+    "text": "PAN: ABCD123; Aadhaar: 1234 5678; Employee ID: EMP-12.",
+    "expected": [],
+    "predicted": []
+  },
+  "ordinary_date_not_dob": {
+    "text": "The meeting date is 15/09/2026. The report was created on 20/09/2026.",
+    "expected": [
+      ["DATE", "15/09/2026"],
+      ["DATE", "20/09/2026"]
+    ],
+    "predicted": []
+  },
+  "multiple_pii_types": {
+    "text": "Employee ID: EMP-51234. Contact: ananya@example.com. Phone: +91 91234 56789. PAN: PQRSX5678K.",
+    "expected": [
+      ["EMPLOYEE_ID", "EMP-51234"],
+      ["EMAIL", "ananya@example.com"],
+      ["PHONE", "+91 91234 56789"],
+      ["PAN", "PQRSX5678K"]
+    ],
+    "predicted": []
+  },
+  "ordinary_text_no_pii": {
+    "text": "The security team reviewed the quarterly report and approved the deployment schedule.",
+    "expected": [],
+    "predicted": []
+  }
+}
