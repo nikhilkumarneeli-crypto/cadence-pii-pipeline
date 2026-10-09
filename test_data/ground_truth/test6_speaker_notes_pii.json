@@ -1,0 +1,46 @@
+{
+  "file_name": "test6_speaker_notes_pii.pptx",
+  "total_slides": 2,
+  "total_text_blocks": 4,
+  "total_tables": 0,
+  "total_table_cells": 0,
+  "total_charts": 0,
+  "total_speaker_notes": 2,
+  "total_images": 0,
+  "expected_titles": [
+    "Board Risk Briefing",
+    "Internal Audit Findings"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Marcus Brody",
+      "location": "speaker_notes_slide_1"
+    },
+    {
+      "type": "EMAIL",
+      "text": "m.brody@cadencefg.example",
+      "location": "speaker_notes_slide_1"
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 432-1098",
+      "location": "speaker_notes_slide_1"
+    },
+    {
+      "type": "NAME",
+      "text": "Nina Rostova",
+      "location": "speaker_notes_slide_2"
+    },
+    {
+      "type": "EMAIL",
+      "text": "n.rostova@cadencefg.example",
+      "location": "speaker_notes_slide_2"
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 432-1099",
+      "location": "speaker_notes_slide_2"
+    }
+  ]
+}

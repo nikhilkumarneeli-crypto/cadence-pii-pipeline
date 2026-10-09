@@ -1,0 +1,86 @@
+{
+  "file_name": "test1_text_boxes_pii.pptx",
+  "total_slides": 2,
+  "total_text_blocks": 5,
+  "total_tables": 0,
+  "total_table_cells": 0,
+  "total_charts": 0,
+  "total_speaker_notes": 0,
+  "total_images": 0,
+  "expected_titles": [
+    "Cadence Executive Committee",
+    "Cadence Compliance Officers"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Eleanor Vance",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "e.vance@cadencefg.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 234-8901",
+      "slide": 1
+    },
+    {
+      "type": "EMPLOYEE_ID",
+      "text": "CFG-EXEC-0101",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Julian Thorne",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "j.thorne@cadencefg.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 234-8902",
+      "slide": 1
+    },
+    {
+      "type": "EMPLOYEE_ID",
+      "text": "CFG-EXEC-0102",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Siddharth Rao",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "s.rao@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 345-6789",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Claire Dupont",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "c.dupont@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 345-6790",
+      "slide": 2
+    }
+  ]
+}

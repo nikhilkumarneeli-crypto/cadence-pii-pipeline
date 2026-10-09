@@ -1,0 +1,57 @@
+{
+  "file_name": "test3_grouped_shapes_pii.pptx",
+  "total_slides": 2,
+  "total_text_blocks": 8,
+  "total_groups": 3,
+  "total_tables": 0,
+  "total_table_cells": 0,
+  "total_charts": 0,
+  "total_speaker_notes": 0,
+  "total_images": 0,
+  "expected_titles": [
+    "Tier 1 Incident Response Squad",
+    "Escalation Hierarchy"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Hannah Abbasi",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "h.abbasi@cadencefg.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 890-1234",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Ian MacIntyre",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "i.macintyre@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Julia Chen",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "j.chen@cadencefg.example",
+      "slide": 2
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 890-4321",
+      "slide": 2
+    }
+  ]
+}

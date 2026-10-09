@@ -1,0 +1,260 @@
+{
+  "file_name": "test3_grouped_shapes_pii.pptx",
+  "total_slides": 2,
+  "extracted_slides": 2,
+  "total_blocks": 8,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 4,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 4,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": false,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_2_group_01"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_b2_sh4",
+      "s1_b3_sh5",
+      "s1_b4_sh6"
+    ],
+    "slide_2_group_01": [
+      "s2_b5_sh2",
+      "s2_b6_sh4",
+      "s2_b7_sh6",
+      "s2_b8_sh7"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Tier 1 Incident Response Squad",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Tier 1 Incident Response Squad"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b2_sh4",
+      "block_type": "text_box",
+      "text": "Incident Commander: Hannah Abbasi",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 324.0,
+        "height": 43.2
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 256,
+      "shape_id": 4,
+      "parent_group_id": "s1_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Incident Commander: Hannah Abbasi"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b3_sh5",
+      "block_type": "text_box",
+      "text": "Title: Senior Director, Incident Response",
+      "position": {
+        "left": 72.0,
+        "top": 158.4,
+        "width": 324.0,
+        "height": 43.2
+      },
+      "order": 3,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 256,
+      "shape_id": 5,
+      "parent_group_id": "s1_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Title: Senior Director, Incident Response"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b4_sh6",
+      "block_type": "text_box",
+      "text": "Contact: h.abbasi@cadencefg.example | +1 (555) 890-1234",
+      "position": {
+        "left": 72.0,
+        "top": 208.8,
+        "width": 324.0,
+        "height": 43.2
+      },
+      "order": 4,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 256,
+      "shape_id": 6,
+      "parent_group_id": "s1_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Contact: h.abbasi@cadencefg.example | +1 (555) 890-1234"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b5_sh2",
+      "block_type": "text_box",
+      "text": "Escalation Hierarchy",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 5,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Escalation Hierarchy"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b6_sh4",
+      "block_type": "text_box",
+      "text": "Lead Analyst: Ian MacIntyre (i.macintyre@cadencefg.example)",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 432.0,
+        "height": 43.2
+      },
+      "order": 6,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 257,
+      "shape_id": 4,
+      "parent_group_id": "s2_grp_3",
+      "group_depth": 1,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Lead Analyst: Ian MacIntyre (i.macintyre@cadencefg.example)"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b7_sh6",
+      "block_type": "text_box",
+      "text": "Deputy Lead: Julia Chen (j.chen@cadencefg.example)",
+      "position": {
+        "left": 86.4,
+        "top": 165.6,
+        "width": 360.0,
+        "height": 36.0
+      },
+      "order": 7,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 257,
+      "shape_id": 6,
+      "parent_group_id": "s2_grp_5",
+      "group_depth": 2,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Deputy Lead: Julia Chen (j.chen@cadencefg.example)"
+      ]
+    },
+    {
+      "file": "test3_grouped_shapes_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b8_sh7",
+      "block_type": "text_box",
+      "text": "Direct Hotline: +1 (555) 890-4321",
+      "position": {
+        "left": 86.4,
+        "top": 208.8,
+        "width": 360.0,
+        "height": 36.0
+      },
+      "order": 8,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "grouped_shape",
+      "slide_id": 257,
+      "shape_id": 7,
+      "parent_group_id": "s2_grp_5",
+      "group_depth": 2,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Direct Hotline: +1 (555) 890-4321"
+      ]
+    }
+  ]
+}

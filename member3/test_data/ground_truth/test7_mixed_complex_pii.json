@@ -1,0 +1,111 @@
+{
+  "file_name": "test7_mixed_complex_pii.pptx",
+  "total_slides": 6,
+  "total_text_blocks": 8,
+  "total_tables": 1,
+  "total_table_cells": 16,
+  "total_groups": 1,
+  "total_charts": 1,
+  "total_images": 1,
+  "total_speaker_notes": 1,
+  "expected_titles": [
+    "Integrated TPRM Oversight Deck",
+    "Vendor Assessment Matrix",
+    "Incident Management Cells",
+    "Security Authorization & Credential Verification",
+    "Risk Metrics & Performance",
+    "Governance Conclusions & Next Steps"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Oliver Vance",
+      "slide": 1
+    },
+    {
+      "type": "EMAIL",
+      "text": "o.vance@cadencefg.example",
+      "slide": 1
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 998-1100",
+      "slide": 1
+    },
+    {
+      "type": "NAME",
+      "text": "Penelope Cruz-Wood",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "p.cruzwood@cloudstorage.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Quentin Blake",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "q.blake@secureauth.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Rohan Mehta",
+      "slide": 2
+    },
+    {
+      "type": "EMAIL",
+      "text": "r.mehta@apexledger.example",
+      "slide": 2
+    },
+    {
+      "type": "NAME",
+      "text": "Samantha Sterling",
+      "slide": 3
+    },
+    {
+      "type": "EMAIL",
+      "text": "s.sterling@cadencefg.example",
+      "slide": 3
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 998-1122",
+      "slide": 3
+    },
+    {
+      "type": "NAME",
+      "text": "Thomas K. Bennett",
+      "slide": 4
+    },
+    {
+      "type": "EMAIL",
+      "text": "t.bennett@cadencefg.example",
+      "slide": 4
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 998-1133",
+      "slide": 4
+    },
+    {
+      "type": "NAME",
+      "text": "Ursula Klein",
+      "slide": 6
+    },
+    {
+      "type": "EMAIL",
+      "text": "u.klein@cadencefg.example",
+      "slide": 6
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 998-1144",
+      "slide": 6
+    }
+  ]
+}

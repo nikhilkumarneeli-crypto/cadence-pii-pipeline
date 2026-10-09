@@ -1,0 +1,44 @@
+{
+  "file_name": "test4_image_ocr_pii.pptx",
+  "total_slides": 1,
+  "total_text_blocks": 1,
+  "total_tables": 0,
+  "total_table_cells": 0,
+  "total_charts": 0,
+  "total_speaker_notes": 0,
+  "total_images": 2,
+  "expected_titles": [
+    "Security Badge & Visitor Pass Scans"
+  ],
+  "expected_image_text": [
+    "CADENCE FINANCIAL GROUP - ID BADGE\nName: Kevin O'Connor\nEmail: k.oconnor@cadencefg.example\nPhone: +1 (555) 678-9012",
+    "CADENCE CONTRACTOR PASS\nContractor: Lorraine Zhao\nSponsor: Solveig Aarnio\nMobile: +1 (555) 678-9013"
+  ],
+  "expected_pii_entities": [
+    {
+      "type": "NAME",
+      "text": "Kevin O'Connor",
+      "location": "image_1"
+    },
+    {
+      "type": "EMAIL",
+      "text": "k.oconnor@cadencefg.example",
+      "location": "image_1"
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 678-9012",
+      "location": "image_1"
+    },
+    {
+      "type": "NAME",
+      "text": "Lorraine Zhao",
+      "location": "image_2"
+    },
+    {
+      "type": "PHONE",
+      "text": "+1 (555) 678-9013",
+      "location": "image_2"
+    }
+  ]
+}

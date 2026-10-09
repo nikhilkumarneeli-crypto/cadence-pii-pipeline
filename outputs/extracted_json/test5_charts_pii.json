@@ -1,0 +1,183 @@
+{
+  "file_name": "test5_charts_pii.pptx",
+  "total_slides": 2,
+  "extracted_slides": 2,
+  "total_blocks": 4,
+  "metadata": {
+    "ocr_status": {
+      "is_available": false,
+      "status_message": "Tesseract OCR binary not found on local system.\nInstallation Instructions for Windows:\n  1. Run in PowerShell: winget install UB-Mannheim.TesseractOCR\n     OR download installer from: https://github.com/UB-Mannheim/tesseract/wiki\n  2. Add 'C:\\Program Files\\Tesseract-OCR' to Windows PATH\n  3. Restart PowerShell / VS Code terminal.",
+      "adapter_type": "TesseractOCRAdapter"
+    },
+    "ordering_algorithm": "deterministic_2d_spatial_banding",
+    "context_clustering": "spatial_proximity_and_hierarchy",
+    "team_role": "Member 3 - PowerPoint Extraction & Structure Retention"
+  },
+  "slide_summaries": [
+    {
+      "slide_number": 1,
+      "slide_id": 256,
+      "total_blocks": 2,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": true,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_1_group_01"
+      ]
+    },
+    {
+      "slide_number": 2,
+      "slide_id": 257,
+      "total_blocks": 2,
+      "titles": [],
+      "has_tables": false,
+      "has_charts": true,
+      "has_images": false,
+      "has_notes": false,
+      "context_groups": [
+        "slide_2_group_01"
+      ]
+    }
+  ],
+  "context_groups": {
+    "slide_1_group_01": [
+      "s1_b1_sh2",
+      "s1_chart_1"
+    ],
+    "slide_2_group_01": [
+      "s2_b3_sh2",
+      "s2_chart_1"
+    ]
+  },
+  "blocks": [
+    {
+      "file": "test5_charts_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_b1_sh2",
+      "block_type": "text_box",
+      "text": "Third-Party Assessment Progress by Tier",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 1,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "text_box",
+      "slide_id": 256,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Third-Party Assessment Progress by Tier"
+      ]
+    },
+    {
+      "file": "test5_charts_pii.pptx",
+      "slide": 1,
+      "section": null,
+      "block_id": "s1_chart_1",
+      "block_type": "chart_text",
+      "text": "Chart Title: 2026 Vendor Assessments by Tier\nCategories: Tier 1 High Risk, Tier 2 Moderate Risk, Tier 3 Low Risk\nSeries: Completed Reviews, Pending Reviews",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 576.0,
+        "height": 324.0
+      },
+      "order": 2,
+      "context_group_id": "slide_1_group_01",
+      "source_type": "chart",
+      "slide_id": 256,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "chart_metadata": {
+        "chart_index": 1,
+        "chart_title": "2026 Vendor Assessments by Tier",
+        "categories": [
+          "Tier 1 High Risk",
+          "Tier 2 Moderate Risk",
+          "Tier 3 Low Risk"
+        ],
+        "series_names": [
+          "Completed Reviews",
+          "Pending Reviews"
+        ],
+        "axis_titles": [],
+        "limitations": null
+      }
+    },
+    {
+      "file": "test5_charts_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_b3_sh2",
+      "block_type": "text_box",
+      "text": "Division Security Remediation",
+      "position": {
+        "left": 57.6,
+        "top": 36.0,
+        "width": 604.8,
+        "height": 57.6
+      },
+      "order": 3,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "text_box",
+      "slide_id": 257,
+      "shape_id": 2,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [
+        "Division Security Remediation"
+      ]
+    },
+    {
+      "file": "test5_charts_pii.pptx",
+      "slide": 2,
+      "section": null,
+      "block_id": "s2_chart_1",
+      "block_type": "chart_text",
+      "text": "Chart Title: Remediation SLA Compliance %\nCategories: Treasury, Operations, Technology, Risk\nSeries: SLA Compliant, Past Due",
+      "position": {
+        "left": 72.0,
+        "top": 108.0,
+        "width": 576.0,
+        "height": 324.0
+      },
+      "order": 4,
+      "context_group_id": "slide_2_group_01",
+      "source_type": "chart",
+      "slide_id": 257,
+      "shape_id": 3,
+      "parent_group_id": null,
+      "group_depth": 0,
+      "confidence": 1.0,
+      "paragraphs": [],
+      "chart_metadata": {
+        "chart_index": 1,
+        "chart_title": "Remediation SLA Compliance %",
+        "categories": [
+          "Treasury",
+          "Operations",
+          "Technology",
+          "Risk"
+        ],
+        "series_names": [
+          "SLA Compliant",
+          "Past Due"
+        ],
+        "axis_titles": [],
+        "limitations": null
+      }
+    }
+  ]
+}
