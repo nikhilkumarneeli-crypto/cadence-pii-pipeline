@@ -13,7 +13,7 @@ from pathlib import Path
 
 import docx
 
-from src.common.schema import Document, PIIEntity, PipelineResult, Redaction, TextBlock
+from src.common.schema import Document, PIIEntity, PIIFinding, PipelineResult, Redaction, TextBlock
 from src.extractors.docx_extractor import DocxExtractionError, DocxExtractor, extract_docx
 from src.pipeline import (
     InvalidComponentError,
@@ -85,8 +85,31 @@ class TestMember1Schema(unittest.TestCase):
         doc = Document(document_id="d1", filename="d.docx", file_type="docx")
         res = PipelineResult(document=doc, detected_entities=[], redactions=[])
         self.assertEqual(res.document.document_id, "d1")
+        self.assertEqual(res.document_id, "d1")
         self.assertEqual(len(res.detected_entities), 0)
+        self.assertEqual(len(res.entities), 0)
         self.assertIsNone(res.redacted_text)
+
+        # Member 4 shorthand initialization (document_id, entities)
+        res2 = PipelineResult(document_id="d2", entities=[])
+        self.assertEqual(res2.document_id, "d2")
+        self.assertEqual(res2.detected_entities, [])
+
+    def test_pii_finding(self):
+        finding = PIIFinding(
+            entity_type="SSN",
+            text="000-00-0000",
+            start=0,
+            end=11,
+            confidence=0.85,
+            detector="Presidio",
+            source="doc_test",
+        )
+        self.assertEqual(finding.entity_type, "SSN")
+        self.assertEqual(finding.confidence, 0.85)
+        d = finding.to_dict()
+        self.assertEqual(d["detector"], "Presidio")
+        self.assertEqual(d["source"], "doc_test")
 
 
 class TestDocxExtractor(unittest.TestCase):
@@ -249,11 +272,21 @@ class TestRouter(unittest.TestCase):
         self.assertEqual(document.file_type, "docx")
         self.assertEqual(document.blocks[0].text, "Routed Docx Content")
 
+    def test_router_pdf_and_pptx_extractor_available(self):
+        # Once Member 2 and Member 3 extractors are integrated, get_extractor returns callables
+        pdf_extractor = get_extractor("sample.pdf")
+        self.assertTrue(callable(pdf_extractor))
+        pptx_extractor = get_extractor("sample.pptx")
+        self.assertTrue(callable(pptx_extractor))
+
     def test_router_pdf_and_pptx_extractor_not_available(self):
-        with self.assertRaises(ExtractorNotAvailableError):
-            get_extractor("sample.pdf")
-        with self.assertRaises(ExtractorNotAvailableError):
-            get_extractor("sample.pptx")
+        import unittest.mock as mock
+        with mock.patch.dict("sys.modules", {"src.extractors.pdf_extractor": None}):
+            with self.assertRaises(ExtractorNotAvailableError):
+                DocumentRouter().get_extractor("sample.pdf")
+        with mock.patch.dict("sys.modules", {"src.extractors.pptx_extractor": None}):
+            with self.assertRaises(ExtractorNotAvailableError):
+                DocumentRouter().get_extractor("sample.pptx")
 
     def test_router_custom_extractor_registration(self):
         custom_router = DocumentRouter()
@@ -401,6 +434,154 @@ class TestPipeline(unittest.TestCase):
         result = run_pipeline(self.test_docx_path)
         self.assertIsInstance(result, PipelineResult)
         self.assertEqual(result.document.file_type, "docx")
+
+    def test_pipeline_with_text_only_detector(self):
+        """Tests integration with Member 4's PIIDetector interface (detect(text: str))."""
+        class MockMember4Detector:
+            def detect(self, text: str):
+                if not isinstance(text, str):
+                    raise TypeError("text must be a string")
+                findings = []
+                if "john@example.com" in text:
+                    start = text.index("john@example.com")
+                    findings.append(
+                        PIIFinding(
+                            entity_type="EMAIL",
+                            text="john@example.com",
+                            start=start,
+                            end=start + len("john@example.com"),
+                            confidence=0.99,
+                            detector="Presidio",
+                        )
+                    )
+                return findings
+
+        pipeline = PIIPipeline()
+        result = pipeline.process(self.test_docx_path, detector=MockMember4Detector())
+        self.assertEqual(len(result.detected_entities), 1)
+        self.assertEqual(result.detected_entities[0].entity_type, "EMAIL")
+        self.assertEqual(result.detected_entities[0].block_id, "para_2")
+
+    def test_pipeline_with_member5_4tuple_redactor(self):
+        """Tests integration with Member 5's redact_document interface returning 4-tuple."""
+        class MockMember5Redactor:
+            def redact_document(self, doc: Document, entities):
+                redactions = [
+                    Redaction(
+                        entity_type="EMAIL",
+                        original_text="john@example.com",
+                        replacement="[EMAIL_1]",
+                        start=0,
+                        end=16,
+                        block_id="para_2",
+                    )
+                ]
+                redacted_text = doc.full_text.replace("john@example.com", "[EMAIL_1]")
+                trace_log = [{"tag": "[EMAIL_1]", "pii_type": "EMAIL"}]
+                return redactions, redacted_text, doc, trace_log
+
+        pipeline = PIIPipeline()
+        result = pipeline.process(
+            self.test_docx_path,
+            detector=lambda d: [PIIFinding("EMAIL", "john@example.com", 0, 16, 1.0, "test")],
+            redactor=MockMember5Redactor(),
+        )
+        self.assertEqual(len(result.redactions), 1)
+        self.assertEqual(result.redactions[0].replacement, "[EMAIL_1]")
+        self.assertIn("traceability_log", result.metadata)
+
+    def test_pipeline_end_to_end_docx_with_real_redactor(self):
+        """Tests end-to-end processing of a real DOCX document with Member 5's PIIRedactor."""
+        from src.redaction.redactor import PIIRedactor
+        sample_path = Path("tests/data/member1_docx/sample_fake_report.docx")
+        if not sample_path.exists():
+            self.skipTest("Sample DOCX not found")
+
+        pipeline = PIIPipeline()
+        def detector(doc):
+            findings = []
+            for block in doc.blocks:
+                if "john@example.com" in block.text:
+                    idx = block.text.index("john@example.com")
+                    findings.append(
+                        PIIEntity(
+                            entity_type="EMAIL",
+                            text="john@example.com",
+                            start=idx,
+                            end=idx + len("john@example.com"),
+                            block_id=block.block_id,
+                        )
+                    )
+            return findings
+
+        result = pipeline.process(sample_path, detector=detector, redactor=PIIRedactor())
+        self.assertEqual(result.document.file_type, "docx")
+        self.assertEqual(len(result.redactions), 1)
+        self.assertIn("[EMAIL_", result.redacted_text)
+        self.assertNotIn("john@example.com", result.redacted_text)
+        self.assertIn("exposure_report", result.metadata)
+
+    def test_pipeline_end_to_end_pdf_with_real_redactor(self):
+        """Tests end-to-end processing of a real PDF document with Member 5's PIIRedactor."""
+        from src.redaction.redactor import PIIRedactor
+        sample_path = Path("tests/data/sample_digital_policy_pii.pdf")
+        if not sample_path.exists():
+            self.skipTest("Sample PDF not found")
+
+        pipeline = PIIPipeline()
+        def detector(doc):
+            findings = []
+            target = "vikram.rao@cadencebank.com"
+            for block in doc.blocks:
+                if target in block.text:
+                    idx = block.text.index(target)
+                    findings.append(
+                        PIIEntity(
+                            entity_type="EMAIL",
+                            text=target,
+                            start=idx,
+                            end=idx + len(target),
+                            block_id=block.block_id,
+                        )
+                    )
+            return findings
+
+        result = pipeline.process(sample_path, detector=detector, redactor=PIIRedactor())
+        self.assertEqual(result.document.file_type, "pdf")
+        self.assertEqual(len(result.redactions), 1)
+        self.assertIn("[EMAIL_", result.redacted_text)
+        self.assertIn("exposure_report", result.metadata)
+
+    def test_pipeline_end_to_end_pptx_with_real_redactor(self):
+        """Tests end-to-end processing of a real PPTX document with Member 5's PIIRedactor."""
+        from src.redaction.redactor import PIIRedactor
+        sample_path = Path("tests/data/member3_pptx/test1_text_boxes_pii.pptx")
+        if not sample_path.exists():
+            self.skipTest("Sample PPTX not found")
+
+        pipeline = PIIPipeline()
+        def detector(doc):
+            findings = []
+            target = "Eleanor Vance"
+            for block in doc.blocks:
+                if target in block.text:
+                    idx = block.text.index(target)
+                    findings.append(
+                        PIIEntity(
+                            entity_type="PERSON",
+                            text=target,
+                            start=idx,
+                            end=idx + len(target),
+                            block_id=block.block_id,
+                        )
+                    )
+            return findings
+
+        result = pipeline.process(sample_path, detector=detector, redactor=PIIRedactor())
+        self.assertEqual(result.document.file_type, "pptx")
+        self.assertEqual(len(result.redactions), 1)
+        self.assertIn("[PERSON_", result.redacted_text)
+        self.assertIn("exposure_report", result.metadata)
 
 
 if __name__ == "__main__":

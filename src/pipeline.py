@@ -13,7 +13,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-from src.common.schema import Document, PIIEntity, PipelineResult, Redaction
+from src.common.schema import Document, PIIEntity, PIIFinding, PipelineResult, Redaction
 from src.router import DocumentRouter, _default_router
 
 
@@ -56,6 +56,32 @@ class PIIPipeline:
             self._validate_detector(default_detector)
         if default_redactor is not None:
             self._validate_redactor(default_redactor)
+
+    @classmethod
+    def create_default(cls, auto_wire: bool = True) -> PIIPipeline:
+        """Creates a pipeline instance, optionally auto-wiring available teammate modules.
+
+        Args:
+            auto_wire: If True, attempts to discover Member 4 (PIIDetector) and
+                       Member 5 (PIIRedactor) components if available. Defaults to True.
+
+        Returns:
+            Configured PIIPipeline instance.
+        """
+        detector = None
+        redactor = None
+        if auto_wire:
+            try:
+                from src.detection.engine import PIIDetector
+                detector = PIIDetector()
+            except Exception:
+                pass
+            try:
+                from src.redaction.redactor import PIIRedactor
+                redactor = PIIRedactor()
+            except Exception:
+                pass
+        return cls(default_detector=detector, default_redactor=redactor)
 
     def process(
         self,
@@ -109,7 +135,7 @@ class PIIPipeline:
         is_empty = len(document.blocks) == 0
 
         # 4. Optional Detection Stage (Member 4 Integration Point)
-        detected_entities: List[PIIEntity] = []
+        detected_entities: List[Union[PIIEntity, PIIFinding, Any]] = []
         if active_detector is not None:
             detected_entities = self._run_detection(active_detector, document)
             stages_executed.append("detection")
@@ -117,13 +143,15 @@ class PIIPipeline:
         # 5. Optional Redaction Stage (Member 5 Integration Point)
         redactions: List[Redaction] = []
         redacted_text: Optional[str] = None
+        traceability_log: Optional[List[Dict[str, Any]]] = None
+
         if active_redactor is not None:
-            redactions, redacted_text = self._run_redaction(
+            redactions, redacted_text, traceability_log = self._run_redaction(
                 active_redactor, document, detected_entities
             )
             stages_executed.append("redaction")
 
-        # 6. Assemble and return PipelineResult
+        # 6. Assemble execution and audit metadata
         pipeline_metadata: Dict[str, Any] = {
             "source_path": str(file_path.resolve()),
             "file_type": document.file_type,
@@ -134,12 +162,29 @@ class PIIPipeline:
             "redactions_count": len(redactions),
         }
 
+        if traceability_log:
+            pipeline_metadata["traceability_log"] = traceability_log
+
+            # Generate Exposure Report (Member 5 report contract) if available
+            try:
+                from src.redaction.report import generate_exposure_report
+                pipeline_metadata["exposure_report"] = generate_exposure_report(
+                    document=document,
+                    entities=detected_entities,
+                    redactions=redactions,
+                    traceability_log=traceability_log,
+                    redacted_text=redacted_text,
+                )
+            except Exception:
+                pass
+
         return PipelineResult(
             document=document,
             detected_entities=detected_entities,
             redactions=redactions,
             redacted_text=redacted_text,
             metadata=pipeline_metadata,
+            document_id=document.document_id,
         )
 
     def _validate_detector(self, detector: Any) -> None:
@@ -156,22 +201,57 @@ class PIIPipeline:
     def _validate_redactor(self, redactor: Any) -> None:
         """Validates that the redactor implements a callable interface or redact method."""
         has_redact = hasattr(redactor, "redact") and callable(getattr(redactor, "redact"))
+        has_redact_doc = hasattr(redactor, "redact_document") and callable(getattr(redactor, "redact_document"))
         is_fn = callable(redactor)
 
-        if not (has_redact or is_fn):
+        if not (has_redact or has_redact_doc or is_fn):
             raise InvalidComponentError(
                 f"Redactor '{redactor}' is invalid: must be callable or provide a 'redact' method."
             )
 
-    def _run_detection(self, detector: Any, document: Document) -> List[PIIEntity]:
-        """Executes the detection stage using the provided detector."""
+    def _run_detection(self, detector: Any, document: Document) -> List[Any]:
+        """Executes the detection stage using the provided detector.
+
+        Adapts seamlessly to detectors expecting either full Document objects
+        or raw text strings (like Member 4's PIIDetector.detect(text: str)),
+        correlating findings back to specific block_ids.
+        """
         try:
-            if hasattr(detector, "detect") and callable(getattr(detector, "detect")):
-                result = detector.detect(document)
+            if hasattr(detector, "detect_document") and callable(getattr(detector, "detect_document")):
+                result = detector.detect_document(document)
+            elif hasattr(detector, "detect") and callable(getattr(detector, "detect")):
+                try:
+                    result = detector.detect(document)
+                except TypeError:
+                    # Detector expects string text (Member 4 PIIDetector). Run block-by-block.
+                    result = []
+                    for block in document.blocks:
+                        if not block.text.strip():
+                            continue
+                        block_findings = detector.detect(block.text)
+                        for f in block_findings:
+                            if hasattr(f, "block_id") and getattr(f, "block_id") is None:
+                                f.block_id = block.block_id
+                            elif not hasattr(f, "block_id"):
+                                setattr(f, "block_id", block.block_id)
+                        result.extend(block_findings)
             elif hasattr(detector, "analyze") and callable(getattr(detector, "analyze")):
                 result = detector.analyze(document)
             elif callable(detector):
-                result = detector(document)
+                try:
+                    result = detector(document)
+                except TypeError:
+                    result = []
+                    for block in document.blocks:
+                        if not block.text.strip():
+                            continue
+                        block_findings = detector(block.text)
+                        for f in block_findings:
+                            if hasattr(f, "block_id") and getattr(f, "block_id") is None:
+                                f.block_id = block.block_id
+                            elif not hasattr(f, "block_id"):
+                                setattr(f, "block_id", block.block_id)
+                        result.extend(block_findings)
             else:
                 raise InvalidComponentError(f"Cannot invoke detector '{detector}'.")
         except Exception as exc:
@@ -181,17 +261,19 @@ class PIIPipeline:
 
         if not isinstance(result, list):
             raise PipelineExecutionError(
-                f"Detector returned unexpected type '{type(result).__name__}'. Expected list of PIIEntity."
+                f"Detector returned unexpected type '{type(result).__name__}'. Expected list of PII findings/entities."
             )
 
         return result
 
     def _run_redaction(
-        self, redactor: Any, document: Document, entities: List[PIIEntity]
-    ) -> Tuple[List[Redaction], Optional[str]]:
+        self, redactor: Any, document: Document, entities: List[Any]
+    ) -> Tuple[List[Redaction], Optional[str], Optional[List[Dict[str, Any]]]]:
         """Executes the redaction stage using the provided redactor."""
         try:
-            if hasattr(redactor, "redact") and callable(getattr(redactor, "redact")):
+            if hasattr(redactor, "redact_document") and callable(getattr(redactor, "redact_document")):
+                result = redactor.redact_document(document, entities)
+            elif hasattr(redactor, "redact") and callable(getattr(redactor, "redact")):
                 result = redactor.redact(document, entities)
             elif callable(redactor):
                 result = redactor(document, entities)
@@ -205,9 +287,13 @@ class PIIPipeline:
         # Unpack various result structures gracefully
         redactions: List[Redaction] = []
         redacted_text: Optional[str] = None
+        traceability_log: Optional[List[Dict[str, Any]]] = None
 
         if isinstance(result, tuple):
-            if len(result) >= 2:
+            if len(result) >= 4 and isinstance(result[3], list):
+                # (redactions, redacted_text, redacted_doc, traceability_log) from Member 5
+                redactions, redacted_text, traceability_log = result[0], result[1], result[3]
+            elif len(result) >= 2:
                 redactions, redacted_text = result[0], result[1]
             elif len(result) == 1:
                 redactions = result[0]
@@ -216,15 +302,21 @@ class PIIPipeline:
         elif hasattr(result, "redactions"):
             redactions = getattr(result, "redactions", [])
             redacted_text = getattr(result, "redacted_text", None)
+            traceability_log = getattr(result, "traceability_log", None)
         elif isinstance(result, dict):
             redactions = result.get("redactions", [])
             redacted_text = result.get("redacted_text", None)
+            traceability_log = result.get("traceability_log", None)
         else:
             raise PipelineExecutionError(
                 f"Redactor returned unrecognized type '{type(result).__name__}'."
             )
 
-        return redactions, redacted_text
+        # Check if redactor stored last_traceability_log on instance
+        if traceability_log is None and hasattr(redactor, "last_traceability_log"):
+            traceability_log = getattr(redactor, "last_traceability_log")
+
+        return redactions, redacted_text, traceability_log
 
 
 # Module-level convenience pipeline instance

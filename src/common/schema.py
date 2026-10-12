@@ -10,7 +10,7 @@ Provides dependency-light, typed dataclasses used across all pipeline stages:
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 
 @dataclass
@@ -48,6 +48,22 @@ class Document:
     file_type: str
     blocks: List[TextBlock] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def full_text(self) -> str:
+        """Convenience property returning all block texts joined by newlines."""
+        return self.get_text()
+
+    def get_text(self, separator: str = "\n\n") -> str:
+        """Returns all document text by concatenating blocks with the given separator.
+
+        Args:
+            separator: String delimiter placed between block texts. Defaults to double newline.
+
+        Returns:
+            Concatenated document text.
+        """
+        return separator.join(b.text for b in self.blocks if b.text)
 
 
 @dataclass
@@ -94,8 +110,10 @@ class PIIFinding:
     confidence: float
     detector: str
     source: Optional[str] = None
+    block_id: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serializes finding into a dictionary."""
         return asdict(self)
 
 
@@ -122,9 +140,56 @@ class Redaction:
 
 @dataclass
 class PipelineResult:
-    """Aggregated output from running the pipeline over a document."""
+    """Represents the end-to-end outcome of document processing.
 
-    document_id: str
-    entities: List[PIIEntity] = field(default_factory=list)
+    Supports both Member 1 pipeline attributes (`document`, `detected_entities`, `redacted_text`)
+    and Member 4/5 shorthand attributes (`document_id`, `entities`) for seamless cross-member compatibility.
+
+    Attributes:
+        document: The original extracted Document model (Optional if initialized with document_id).
+        detected_entities: List of PIIEntity or PIIFinding instances identified by the detector.
+        redactions: List of Redaction operations performed.
+        redacted_text: Full document text after applying redactions (if redaction was run).
+        metadata: Execution statistics, timing, or pipeline configuration info.
+        document_id: Optional explicit ID of the document.
+        entities: Alias for detected_entities.
+    """
+
+    document: Optional[Document] = None
+    detected_entities: List[Any] = field(default_factory=list)
     redactions: List[Redaction] = field(default_factory=list)
+    redacted_text: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+    document_id: Optional[str] = None
+
+    def __init__(
+        self,
+        document: Optional[Document] = None,
+        detected_entities: Optional[List[Any]] = None,
+        redactions: Optional[List[Redaction]] = None,
+        redacted_text: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        document_id: Optional[str] = None,
+        entities: Optional[List[Any]] = None,
+    ) -> None:
+        self.document = document
+        self.redactions = redactions if redactions is not None else []
+        self.redacted_text = redacted_text
+        self.metadata = metadata if metadata is not None else {}
+        self.document_id = document_id or (document.document_id if document is not None else None)
+
+        if detected_entities is not None:
+            self.detected_entities = detected_entities
+        elif entities is not None:
+            self.detected_entities = entities
+        else:
+            self.detected_entities = []
+
+    @property
+    def entities(self) -> List[Any]:
+        """Alias property matching Member 4 / Member 5 expectation."""
+        return self.detected_entities
+
+    @entities.setter
+    def entities(self, value: List[Any]) -> None:
+        self.detected_entities = value
