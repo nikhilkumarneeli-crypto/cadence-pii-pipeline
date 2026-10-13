@@ -283,3 +283,66 @@ def test_finding_order_is_strictly_chronological(detector):
 
     starts = [item.start for item in results]
     assert starts == sorted(starts), "Findings must be returned in natural document order."
+
+
+# =====================================================================
+# Phone Redaction & Date Disambiguation Regression Tests
+# =====================================================================
+
+@pytest.mark.parametrize(
+    "phone_str",
+    [
+        "M +1 (555) 0139",
+        "M +1 (555) 0192",
+        "M +1 (555) 0152",
+        "M +1 (555) 0163",
+        "M +1 (555) 0168",
+        "M +1 (555) 0183",
+        "+1 (555) 0114",
+        "+1 (555) 0196",
+    ],
+)
+def test_prefixed_phone_numbers_detected_as_single_phone_entity(detector, phone_str):
+    text = f"Contact at {phone_str} for support."
+    findings = get_findings(detector, text)
+
+    assert ("PHONE", phone_str) in findings
+    assert not any(entity in {"DATE", "DATE_OF_BIRTH"} for entity, _ in findings)
+    assert_span_offsets_are_exact(detector, text)
+
+
+@pytest.mark.parametrize(
+    "stopword",
+    [
+        "annual",
+        "annually",
+        "monthly",
+        "quarterly",
+        "weekly",
+        "daily",
+        "biannual",
+        "semi-annual",
+    ],
+)
+def test_date_stopwords_not_classified_as_dates(detector, stopword):
+    text = f"{stopword.capitalize()} control testing and assessment."
+    findings = get_findings(detector, text)
+
+    assert not any(
+        entity in {"DATE", "DATE_OF_BIRTH", "DATE_TIME", "TIME"}
+        for entity, _ in findings
+    )
+
+
+def test_standalone_four_digits_require_valid_year_and_date_context(detector):
+    # Valid year with clear date context
+    text_with_context = "The policy was approved in 2026 and amended dated 1999."
+    findings_context = get_findings(detector, text_with_context)
+    dates_found = {val for ent, val in findings_context if ent == "DATE"}
+    assert "2026" in dates_found
+    assert "1999" in dates_found
+
+    # 4-digit code outside modern range or without context should NOT be DATE
+    text_invalid_years = "Item 0139 and code 1800 with sample 2050."
+    findings_invalid = get_findings(detector, text_invalid_years)
+    assert not any(entity in {"DATE", "DATE_OF_BIRTH"} for entity, _ in findings_invalid)

@@ -380,6 +380,7 @@ DEFAULT_RULES = [
     Rule(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)", "[SSN]"),
     # phone: separators must NOT span newlines (they would swallow neighbouring table cells)
     Rule(r"(?<![\w-])(?:\+\d{1,3}[ \t.\-]?)?\(?\d{2,4}\)?[ \t.\-]\d{3,4}[ \t.\-]\d{4}(?!\d)", "[PHONE]"),
+    Rule(r"(?i)(?<![\w])(?:M\s*|\+\d{1,3}[ \t.\-]?|\(\d{3}\)[ \t.\-]?)(?:\+?\d{1,3}[ \t.\-]?)?(?:\(?\d{3}\)?[ \t.\-]?)?\d{4}(?!\d)", "[PHONE]"),
     # phone wrapped across lines: "+44 20" / "+1 (212)" / "+1" ...
     Rule(r"(?<![\w])\+\d{1,3}(?:[ \t]*\(?\d{2,4}\)?)?(?![\d-])", "[PHONE]"),
     # ... and its tail on its own line: "7555 0171" / "555-0147"

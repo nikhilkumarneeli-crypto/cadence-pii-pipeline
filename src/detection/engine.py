@@ -34,6 +34,34 @@ CARD_FALLBACK_PATTERN = re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")
 SSN_STRICT_PATTERN = re.compile(r"\b\d{3}-\d{2}-\d{4}\b")
 DIGIT_ONLY_CODE_PATTERN = re.compile(r"^\d{5,6}$")
 
+PHONE_PATTERN = re.compile(
+    r"(?i)(?<!\w)(?:"
+    r"(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\d)"
+    r"|"
+    r"(?:(?:M\s*|\+\d{1,3}[\s.\-]?|\(\d{3}\)[\s.\-]?)(?:\+?\d{1,3}[\s.\-]?)?(?:\(?\d{3}\)?[\s.\-]?)?(?:\d{3}[\s.\-]?)?\d{4}(?!\d))"
+    r"|"
+    r"\b\d{3}[.\-]\d{3}[.\-]\d{4}(?!\d)"
+    r")"
+)
+
+DATE_STOPWORDS = {
+    "annual",
+    "annually",
+    "monthly",
+    "quarterly",
+    "weekly",
+    "daily",
+    "biannual",
+    "semi-annual",
+}
+
+YEAR_CONTEXT_PATTERN = re.compile(
+    r"\b(?:in|dated|since|year|as\s+of|from|to|by|until|during|circa|c\.|fy|q[1-4]|established|founded|joined|ad|bc|ce|"
+    r"january|february|march|april|may|june|july|august|september|october|november|december|"
+    r"jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\b",
+    re.IGNORECASE,
+)
+
 ADDRESS_PREFIX_PATTERN = re.compile(
     r"\b(?:home\s+address|residential\s+address|address)"
     r"\s*:\s*((?:[^\n.;]|\.(?=\S))+)",
@@ -314,13 +342,18 @@ def build_custom_recognizers() -> List[PatternRecognizer]:
         ),
         PatternRecognizer(
             supported_entity="PHONE_NUMBER",
-            name="IndianPhoneRecognizer",
+            name="GlobalPhoneRecognizer",
             patterns=[
+                Pattern(
+                    name="global_phone_pattern",
+                    regex=PHONE_PATTERN.pattern,
+                    score=0.85,
+                ),
                 Pattern(
                     name="indian_mobile_pattern",
                     regex=r"(?<!\d)(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\d)",
                     score=0.75,
-                )
+                ),
             ],
             context=["phone", "mobile", "contact", "telephone", "call"],
         ),
@@ -446,6 +479,61 @@ class PIIDetector:
             )
         return findings
 
+    @classmethod
+    def _is_date_stopword(cls, value: str) -> bool:
+        clean = value.strip().casefold()
+        if clean in DATE_STOPWORDS:
+            return True
+        tokens = set(re.findall(r"[a-z]+(?:-[a-z]+)?", clean))
+        return bool(tokens & DATE_STOPWORDS)
+
+    @classmethod
+    def _is_valid_four_digit_year(cls, text: str, start: int, end: int, value: str) -> bool:
+        four_digit_matches = re.findall(r"\b\d{4}\b", value)
+        if four_digit_matches:
+            has_month = bool(re.search(
+                r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|"
+                r"jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b",
+                value,
+                re.IGNORECASE,
+            ))
+            has_date_format = bool(re.search(r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b", value))
+            if has_month or has_date_format:
+                return True
+
+            for match_str in four_digit_matches:
+                year = int(match_str)
+                if not (1920 <= year <= 2035):
+                    return False
+
+            window_before = text[max(0, start - 30):start]
+            window_after = text[end:min(len(text), end + 30)]
+            return bool(
+                YEAR_CONTEXT_PATTERN.search(window_before)
+                or YEAR_CONTEXT_PATTERN.search(window_after)
+                or YEAR_CONTEXT_PATTERN.search(value)
+            )
+        return True
+
+    @classmethod
+    def _detect_phone_numbers(cls, text: str) -> List[PIIFinding]:
+        findings = []
+        for match in PHONE_PATTERN.finditer(text):
+            m_start = match.start()
+            val = match.group().rstrip(".,;:!?")
+            m_end = m_start + len(val)
+            findings.append(
+                PIIFinding(
+                    entity_type="PHONE",
+                    text=text[m_start:m_end],
+                    start=m_start,
+                    end=m_end,
+                    confidence=0.90,
+                    detector="RegexPhoneRecognizer",
+                )
+            )
+        return findings
+
     def detect_document(self, document: Any) -> List[PIIFinding]:
         """Process document block-by-block and attach block_id to all findings."""
         blocks = getattr(document, "blocks", [])
@@ -471,8 +559,12 @@ class PIIDetector:
         if not isinstance(text, str):
             raise TypeError("text must be a string")
 
+        # Prioritize phone number detection before any date extraction
+        phone_findings = self._detect_phone_numbers(text)
+        phone_spans = [(f.start, f.end) for f in phone_findings]
+
         results = self.analyzer.analyze(text=text, language="en")
-        findings: List[PIIFinding] = []
+        findings: List[PIIFinding] = list(phone_findings)
 
         for result in results:
             raw_type = result.entity_type
@@ -505,11 +597,23 @@ class PIIDetector:
                 value = text[start:end]
                 norm_val = value.strip().casefold()
 
-            # Suppress vague temporal expressions and standalone numeric codes
+            # Avoid duplicating phone findings and track spans
+            if raw_type in ("PHONE_NUMBER", "PHONE"):
+                if any(self._spans_overlap(start, end, p_start, p_end) for p_start, p_end in phone_spans):
+                    continue
+                phone_spans.append((start, end))
+
+            # Suppress vague temporal expressions, date stopwords, and invalid 4-digit years
             if raw_type in ("DATE", "DATE_TIME", "TIME"):
+                if any(self._spans_overlap(start, end, p_start, p_end) for p_start, p_end in phone_spans):
+                    continue
+                if self._is_date_stopword(value):
+                    continue
                 if self._is_vague_date_phrase(value):
                     continue
                 if DIGIT_ONLY_CODE_PATTERN.fullmatch(value.strip()):
+                    continue
+                if not self._is_valid_four_digit_year(text, start, end, value):
                     continue
 
             if raw_type == "US_DRIVER_LICENSE":
@@ -671,7 +775,7 @@ class PIIDetector:
                 email_spans.append((m_start, m_end))
 
         # Conflict & Overlap Resolution:
-        # Prioritize longer PERSON_NAME spans over shorter sub-spans (e.g. Miriam T. Achebe over Miriam)
+        # Prioritize longer PERSON_NAME and PHONE spans over shorter sub-spans
         email_spans = [(f.start, f.end) for f in findings if f.entity_type == "EMAIL"]
         phone_spans = [(f.start, f.end) for f in findings if f.entity_type == "PHONE"]
 
@@ -681,13 +785,30 @@ class PIIDetector:
                 continue
             if item.entity_type == "URL" and any(e_start <= item.start and item.end <= e_end for e_start, e_end in email_spans):
                 continue
-            if item.entity_type in ("DATE", "DATE_OF_BIRTH") and any(self._spans_overlap(item.start, item.end, p_start, p_end) for p_start, p_end in phone_spans):
-                continue
+            if item.entity_type in ("DATE", "DATE_OF_BIRTH"):
+                if any(self._spans_overlap(item.start, item.end, p_start, p_end) for p_start, p_end in phone_spans):
+                    continue
+                if self._is_date_stopword(item.text):
+                    continue
+                if not self._is_valid_four_digit_year(text, item.start, item.end, item.text):
+                    continue
             resolved_findings.append(item)
 
+        # Deconflict overlapping phone numbers: keep longer span
+        phone_items = [f for f in resolved_findings if f.entity_type == "PHONE"]
+        other_items = [f for f in resolved_findings if f.entity_type != "PHONE"]
+
+        phone_items.sort(key=lambda f: (f.start, -(f.end - f.start)))
+        filtered_phones: List[PIIFinding] = []
+        last_phone_end = -1
+        for p in phone_items:
+            if p.start >= last_phone_end:
+                filtered_phones.append(p)
+                last_phone_end = p.end
+
         # Deconflict overlapping person names: keep longer span
-        person_items = [f for f in resolved_findings if f.entity_type == "PERSON_NAME"]
-        other_items = [f for f in resolved_findings if f.entity_type != "PERSON_NAME"]
+        person_items = [f for f in other_items if f.entity_type == "PERSON_NAME"]
+        non_person_items = [f for f in other_items if f.entity_type != "PERSON_NAME"]
         
         person_items.sort(key=lambda f: (f.start, -(f.end - f.start)))
         filtered_persons: List[PIIFinding] = []
@@ -697,7 +818,7 @@ class PIIDetector:
                 filtered_persons.append(p)
                 last_end = p.end
 
-        final_findings = other_items + filtered_persons
+        final_findings = non_person_items + filtered_phones + filtered_persons
         unique_findings: List[PIIFinding] = []
         seen = set()
         for item in final_findings:

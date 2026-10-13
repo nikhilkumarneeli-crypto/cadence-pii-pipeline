@@ -394,7 +394,69 @@ _RE_SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
 _RE_EMP = re.compile(r"\b(?:EMP|DIR)-\d{3,8}\b")
 _RE_EMP_LABEL = re.compile(r"(?i)\bemployee\s*(?:id|number|no\.?)\s*[:\-#]?\s*([A-Z]{0,4}-?\d{4,})\b")
 _RE_PAN = re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b")
-_RE_PHONE = re.compile(r"(?<!\d)(?:\+?\d{1,3}[\s.\-]?)?\(?\d{2,4}\)?[\s.\-]\d{3,4}[\s.\-]\d{4}(?!\d)")
+_RE_PHONE = re.compile(
+    r"(?i)(?<!\w)(?:"
+    r"(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\d)"
+    r"|"
+    r"(?:(?:M\s*|\+\d{1,3}[\s.\-]?|\(\d{3}\)[\s.\-]?)(?:\+?\d{1,3}[\s.\-]?)?(?:\(?\d{3}\)?[\s.\-]?)?(?:\d{3}[\s.\-]?)?\d{4}(?!\d))"
+    r"|"
+    r"\b\d{3}[.\-]\d{3}[.\-]\d{4}(?!\d)"
+    r")"
+)
+DATE_STOPWORDS = {
+    "annual",
+    "annually",
+    "monthly",
+    "quarterly",
+    "weekly",
+    "daily",
+    "biannual",
+    "semi-annual",
+}
+_YEAR_CONTEXT_PATTERN = re.compile(
+    r"\b(?:in|dated|since|year|as\s+of|from|to|by|until|during|circa|c\.|fy|q[1-4]|established|founded|joined|ad|bc|ce|"
+    r"january|february|march|april|may|june|july|august|september|october|november|december|"
+    r"jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec)\b",
+    re.IGNORECASE,
+)
+
+
+def _is_date_stopword(val: str) -> bool:
+    clean = val.strip().casefold()
+    if clean in DATE_STOPWORDS:
+        return True
+    tokens = set(re.findall(r"[a-z]+(?:-[a-z]+)?", clean))
+    return bool(tokens & DATE_STOPWORDS)
+
+
+def _is_valid_four_digit_year(text: str, start: int, end: int, val: str) -> bool:
+    four_digit_matches = re.findall(r"\b\d{4}\b", val)
+    if four_digit_matches:
+        has_month = bool(re.search(
+            r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|"
+            r"jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b",
+            val,
+            re.IGNORECASE,
+        ))
+        has_date_format = bool(re.search(r"\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b", val))
+        if has_month or has_date_format:
+            return True
+
+        for match_str in four_digit_matches:
+            year = int(match_str)
+            if not (1920 <= year <= 2035):
+                return False
+
+        window_before = text[max(0, start - 30):start]
+        window_after = text[end:min(len(text), end + 30)]
+        return bool(
+            _YEAR_CONTEXT_PATTERN.search(window_before)
+            or _YEAR_CONTEXT_PATTERN.search(window_after)
+            or _YEAR_CONTEXT_PATTERN.search(val)
+        )
+    return True
+
+
 _RE_DOB = re.compile(
     r"(?i)\b(?:date\s+of\s+birth|d\.?\s?o\.?\s?b\.?|birthdate|born\s+on)\s*[:\-]?\s*"
     r"([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{1,2}[/-]\d{1,2}[/-]\d{2,4})")
@@ -597,9 +659,17 @@ def _resolve_overlaps(entities: List[PIIEntity]) -> List[PIIEntity]:
         by_block.setdefault(e.block_id or "", []).append(e)
     kept: List[PIIEntity] = []
     for bids in by_block.values():
-        bids.sort(key=lambda e: (e.start, -(e.end - e.start), -e.confidence))
-        last_end = -1
+        phone_spans = [(e.start, e.end) for e in bids if e.entity_type in ("PHONE", "PHONE_NUMBER")]
+        filtered_bids = []
         for e in bids:
+            if e.entity_type in ("DATE", "DATE_OF_BIRTH"):
+                if any(max(e.start, ps) < min(e.end, pe) for ps, pe in phone_spans):
+                    continue
+            filtered_bids.append(e)
+
+        filtered_bids.sort(key=lambda e: (e.start, -(e.end - e.start), -e.confidence))
+        last_end = -1
+        for e in filtered_bids:
             if e.start >= last_end:
                 kept.append(e)
                 last_end = e.end
@@ -610,12 +680,36 @@ def detect_pii(document: Document, threshold: float) -> List[PIIEntity]:
     eng_ents = _engine_detect(document) or []
     builtin_ents = _builtin_detect(document) or []
     combined = list(eng_ents) + list(builtin_ents)
-    filtered = [
-        e for e in combined
-        if e.confidence >= threshold
-        and (e.text or "").strip()
-        and not (e.entity_type in ("PERSON", "PERSON_NAME") and not is_valid_person_name(e.text))
-    ]
+
+    # Prioritize phone number spans per block
+    phone_spans_by_block: Dict[str, List[Tuple[int, int]]] = {}
+    for e in combined:
+        if e.entity_type in ("PHONE", "PHONE_NUMBER"):
+            b_id = e.block_id or ""
+            phone_spans_by_block.setdefault(b_id, []).append((e.start, e.end))
+
+    block_texts: Dict[str, str] = {b.block_id: (b.text or "") for b in document.blocks}
+
+    filtered = []
+    for e in combined:
+        if e.confidence < threshold:
+            continue
+        if not (e.text or "").strip():
+            continue
+        if e.entity_type in ("PERSON", "PERSON_NAME") and not is_valid_person_name(e.text):
+            continue
+        if e.entity_type in ("DATE", "DATE_TIME", "TIME"):
+            b_id = e.block_id or ""
+            p_spans = phone_spans_by_block.get(b_id, [])
+            if any(max(e.start, ps) < min(e.end, pe) for ps, pe in p_spans):
+                continue
+            if _is_date_stopword(e.text):
+                continue
+            b_text = block_texts.get(b_id, "")
+            if not _is_valid_four_digit_year(b_text, e.start, e.end, e.text):
+                continue
+        filtered.append(e)
+
     return _resolve_overlaps(filtered)
 
 
@@ -1309,31 +1403,57 @@ def render_audit_tab(res: Dict[str, Any]) -> None:
 
 
 def render_traceability_tab(res: Dict[str, Any]) -> None:
-    trace: List[Dict[str, Any]] = list(res["trace"])
+    trace = list(res.get("trace", []))
     st.markdown("Audit Log — Real-time mapping of applied tags to original text spans.")
     col_a, col_b = st.columns([3, 1])
-    query = col_a.text_input("🔍 Search Traceability Log", "")
-    reveal = col_b.toggle("Reveal Original Values", value=False)
-
-    rows = trace
-    if query:
-        q = query.lower()
-        rows = [t for t in rows if q in json.dumps(t, default=str).lower()]
-    display_rows = []
-    for t in rows:
-        r = dict(t)
-        if not reveal:
-            r["original_text"] = "•" * min(12, max(6, len(str(r.get("original_text", "")))))
-        display_rows.append(r)
+    search_query = col_a.text_input("Search Traceability Log", placeholder="Type to filter...")
+    reveal_originals = col_b.toggle("Reveal Original Values", value=False)
 
     if _HAVE_PANDAS:
-        st.dataframe(pd.DataFrame(display_rows), use_container_width=True, hide_index=True)
-    else:
-        st.table(display_rows)
-    st.caption(f"{len(display_rows)} log records")
+        df_trace = pd.DataFrame(trace) if isinstance(trace, list) else trace.copy()
 
-    st.download_button("⬇ Export Traceability (.csv)", records_to_csv(display_rows),
-                       file_name="traceability_log.csv", mime="text/csv")
+        base_cols = [
+            c for c in [
+                "document_id", "file", "file_type", "page_or_slide", 
+                "block_id", "block_type", "pii_type", "tag"
+            ] if c in df_trace.columns
+        ]
+
+        if reveal_originals and "original_text" in df_trace.columns:
+            display_cols = base_cols + ["original_text"]
+        else:
+            display_cols = base_cols
+
+        if search_query and not df_trace.empty:
+            mask = df_trace.astype(str).apply(
+                lambda row: row.str.contains(search_query, case=False, na=False).any(), axis=1
+            )
+            df_display = df_trace[mask]
+        else:
+            df_display = df_trace
+
+        st.dataframe(df_display[display_cols], use_container_width=True, hide_index=True)
+        st.caption(f"{len(df_display)} log records")
+
+        export_data = records_to_csv(df_display[display_cols].to_dict(orient="records")) if not df_display.empty else ""
+        st.download_button("⬇ Export Traceability (.csv)", export_data,
+                           file_name="traceability_log.csv", mime="text/csv")
+    else:
+        rows = trace
+        if search_query:
+            q = search_query.lower()
+            rows = [t for t in rows if q in json.dumps(t, default=str).lower()]
+        base_keys = ["document_id", "file", "file_type", "page_or_slide", "block_id", "block_type", "pii_type", "tag"]
+        display_rows = []
+        for t in rows:
+            r = {k: t[k] for k in base_keys if k in t}
+            if reveal_originals and "original_text" in t:
+                r["original_text"] = t["original_text"]
+            display_rows.append(r)
+        st.table(display_rows)
+        st.caption(f"{len(display_rows)} log records")
+        st.download_button("⬇ Export Traceability (.csv)", records_to_csv(display_rows),
+                           file_name="traceability_log.csv", mime="text/csv")
 
 
 def render_artifact_workspace(type_filter: List[str]) -> None:
