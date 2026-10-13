@@ -1,10 +1,11 @@
 """
-Optiv x Cadence - PII Shield
-=============================
-Enterprise-grade Cyber Risk & Compliance dashboard for the PII detection,
-redaction and audit pipeline. Single-file Streamlit app (app/demo.py).
+Cadence PII Shield — Enterprise Compliance & Redaction Engine
+=============================================================
+Enterprise-grade Cyber Risk & Compliance dashboard for PII detection,
+redaction, audit logging, and native-format sanitized exports.
+Single-file Streamlit app (app/demo.py).
 
-Pipeline: Ingestion -> Extraction -> Detection -> Redaction -> Audit Report
+Pipeline: Ingestion -> Extraction -> Detection -> Redaction -> Audit Report -> Native Export
 """
 
 import csv
@@ -12,6 +13,7 @@ import hashlib
 import html
 import io
 import json
+import logging
 import os
 import re
 import sys
@@ -20,6 +22,19 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+
+logger = logging.getLogger(__name__)
+
+# Ensure TESSDATA_PREFIX is configured on Windows
+for _tp in [
+    os.environ.get("TESSDATA_PREFIX"),
+    r"C:\Program Files\Tesseract-OCR\tessdata",
+    r"C:\Program Files (x86)\Tesseract-OCR\tessdata",
+    str(Path.home() / "AppData" / "Local" / "Programs" / "Tesseract-OCR" / "tessdata"),
+]:
+    if _tp and Path(_tp).exists():
+        os.environ["TESSDATA_PREFIX"] = str(_tp)
+        break
 
 # --------------------------------------------------------------------------- #
 # 0. PATH SETUP
@@ -30,23 +45,23 @@ for _p in (str(PROJECT_ROOT), str(APP_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-import streamlit as st  # noqa: E402
+import streamlit as st
 
-try:  # pandas optional - pure-python fallbacks exist everywhere
+try:
     import pandas as pd
     _HAVE_PANDAS = True
-except Exception:  # pragma: no cover
+except Exception:
     pd = None
     _HAVE_PANDAS = False
 
 
 # --------------------------------------------------------------------------- #
-# 1. SCHEMA CONTRACTS (import team modules, fall back to local copies)
+# 1. SCHEMA CONTRACTS
 # --------------------------------------------------------------------------- #
 try:
-    from src.common.schema import TextBlock, Document, PIIEntity, Redaction  # noqa
+    from src.common.schema import TextBlock, Document, PIIEntity, Redaction
     _HAVE_SCHEMA = True
-except Exception:  # pragma: no cover - fallback so the demo NEVER crashes
+except Exception:
     _HAVE_SCHEMA = False
 
     @dataclass
@@ -89,52 +104,114 @@ except Exception:  # pragma: no cover - fallback so the demo NEVER crashes
 # --------------------------------------------------------------------------- #
 RISK_ORDER = {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "NONE": 0}
 
+CANONICAL_TYPE_MAP = {
+    "PERSON": "PERSON",
+    "PERSON_NAME": "PERSON",
+    "EMPLOYEE_ID": "EMPLOYEE_ID",
+    "EMAIL": "EMAIL",
+    "EMAIL_ADDRESS": "EMAIL",
+    "PHONE": "PHONE",
+    "PHONE_NUMBER": "PHONE",
+    "SSN": "SSN",
+    "US_SSN": "SSN",
+    "GOVERNMENT_ID": "GOVERNMENT_ID",
+    "PAN": "GOVERNMENT_ID",
+    "AADHAAR": "GOVERNMENT_ID",
+    "PASSPORT": "GOVERNMENT_ID",
+    "CREDIT_CARD": "CREDIT_CARD",
+    "CARD_NUMBER": "CREDIT_CARD",
+    "ACCOUNT_NUMBER": "ACCOUNT_NUMBER",
+    "DATE_OF_BIRTH": "DATE_OF_BIRTH",
+    "DOB": "DATE_OF_BIRTH",
+    "ADDRESS": "ADDRESS",
+    "HOME_ADDRESS": "ADDRESS",
+    "DATE": "DATE",
+}
+
 TAG_PREFIX = {
     "PERSON": "PERSON",
+    "PERSON_NAME": "PERSON",
     "EMPLOYEE_ID": "EMP_ID",
+    "EMAIL": "EMAIL",
     "EMAIL_ADDRESS": "EMAIL",
+    "PHONE": "PHONE",
     "PHONE_NUMBER": "PHONE",
     "US_SSN": "SSN",
+    "SSN": "SSN",
     "GOVERNMENT_ID": "GOV_ID",
+    "PAN": "GOV_ID",
+    "AADHAAR": "GOV_ID",
+    "PASSPORT": "GOV_ID",
     "CREDIT_CARD": "CC",
+    "CARD_NUMBER": "CC",
     "ACCOUNT_NUMBER": "ACCT",
     "DATE_OF_BIRTH": "DOB",
+    "DOB": "DOB",
     "ADDRESS": "ADDR",
+    "HOME_ADDRESS": "ADDR",
+    "DATE": "DATE",
 }
 
 TYPE_SHORT = {
-    "PERSON": "PERSON", "EMPLOYEE_ID": "EMP_ID", "EMAIL_ADDRESS": "EMAIL",
-    "PHONE_NUMBER": "PHONE", "US_SSN": "SSN", "GOVERNMENT_ID": "GOV_ID",
-    "CREDIT_CARD": "CREDIT_CARD", "ACCOUNT_NUMBER": "ACCT_NO",
-    "DATE_OF_BIRTH": "DOB", "ADDRESS": "ADDRESS",
+    "PERSON": "PERSON", "PERSON_NAME": "PERSON",
+    "EMPLOYEE_ID": "EMP_ID",
+    "EMAIL_ADDRESS": "EMAIL", "EMAIL": "EMAIL",
+    "PHONE_NUMBER": "PHONE", "PHONE": "PHONE",
+    "US_SSN": "SSN", "SSN": "SSN",
+    "GOVERNMENT_ID": "GOV_ID", "PAN": "PAN", "AADHAAR": "AADHAAR", "PASSPORT": "PASSPORT",
+    "CREDIT_CARD": "CREDIT_CARD", "CARD_NUMBER": "CREDIT_CARD",
+    "ACCOUNT_NUMBER": "ACCT_NO",
+    "DATE_OF_BIRTH": "DOB", "DOB": "DOB",
+    "ADDRESS": "ADDRESS", "HOME_ADDRESS": "ADDRESS",
+    "DATE": "DATE",
 }
 
 SENSITIVITY = {
-    "US_SSN": "CRITICAL", "GOVERNMENT_ID": "CRITICAL",
-    "CREDIT_CARD": "CRITICAL", "ACCOUNT_NUMBER": "CRITICAL",
-    "EMPLOYEE_ID": "HIGH", "DATE_OF_BIRTH": "HIGH",
-    "EMAIL_ADDRESS": "MEDIUM", "PHONE_NUMBER": "MEDIUM", "ADDRESS": "MEDIUM",
-    "PERSON": "LOW",
+    "US_SSN": "CRITICAL", "SSN": "CRITICAL", "GOVERNMENT_ID": "CRITICAL",
+    "PAN": "CRITICAL", "AADHAAR": "CRITICAL", "PASSPORT": "CRITICAL",
+    "CREDIT_CARD": "CRITICAL", "CARD_NUMBER": "CRITICAL", "ACCOUNT_NUMBER": "CRITICAL",
+    "EMPLOYEE_ID": "HIGH", "DATE_OF_BIRTH": "HIGH", "DOB": "HIGH",
+    "EMAIL_ADDRESS": "MEDIUM", "EMAIL": "MEDIUM",
+    "PHONE_NUMBER": "MEDIUM", "PHONE": "MEDIUM",
+    "ADDRESS": "MEDIUM", "HOME_ADDRESS": "MEDIUM",
+    "PERSON": "LOW", "PERSON_NAME": "LOW",
+    "DATE": "LOW",
 }
 
-ALL_TYPES = list(TAG_PREFIX.keys())
+ALL_TYPES = [
+    "PERSON",
+    "EMPLOYEE_ID",
+    "EMAIL",
+    "PHONE",
+    "SSN",
+    "GOVERNMENT_ID",
+    "CREDIT_CARD",
+    "ACCOUNT_NUMBER",
+    "DATE_OF_BIRTH",
+    "ADDRESS",
+    "DATE",
+]
 PIPELINE_STAGES = ["Ingestion", "Extraction", "Detection", "Redaction", "Audit Report"]
 
 
 # --------------------------------------------------------------------------- #
-# 3. BUILT-IN FALLBACK EXTRACTORS (docx / pdf / pptx) - demo never crashes
+# 3. BUILT-IN FALLBACK EXTRACTORS
 # --------------------------------------------------------------------------- #
 def _ocr_page_fitz(path: Union[str, Path], page_number: int) -> Tuple[str, float]:
-    """Attempt OCR of a scanned page via PyMuPDF (needs Tesseract)."""
     try:
         import fitz
         doc = fitz.open(str(path))
         page = doc[page_number - 1]
-        tp = page.get_textpage_ocr(flags=0, language="eng", dpi=200, full=True)
+        tess_path = os.environ.get("TESSDATA_PREFIX")
+        ocr_kwargs: Dict[str, Any] = {"flags": 0, "language": "eng", "dpi": 200, "full": True}
+        if tess_path:
+            ocr_kwargs["tessdata"] = tess_path
+        tp = page.get_textpage_ocr(**ocr_kwargs)
         text = page.get_text(textpage=tp).strip()
         doc.close()
         return text, (0.62 if text else 0.0)
-    except Exception:
+    except Exception as exc:
+        logger.error(f"OCR failed for page {page_number} of {path}: {exc}")
         return "", 0.0
 
 
@@ -263,12 +340,10 @@ def _fallback_route_and_extract(path: Union[str, Path]) -> Document:
     return Document(
         document_id=hashlib.sha256(str(p).encode()).hexdigest()[:12],
         filename=p.name, file_type=ext, blocks=blocks,
-        metadata={"extraction_engine": "builtin_fallback",
-                  "source_path": str(p)})
+        metadata={"extraction_engine": "builtin_fallback", "source_path": str(p)})
 
 
 def route_and_extract(path: Union[str, Path]) -> Document:
-    """Try the team router first; gracefully fall back to built-in extractors."""
     try:
         from src.router import route_and_extract as _team_route
         doc = _team_route(path)
@@ -280,14 +355,46 @@ def route_and_extract(path: Union[str, Path]) -> Document:
 
 
 # --------------------------------------------------------------------------- #
-# 4. BUILT-IN HYBRID PII DETECTOR (regex + context + checksum/format rules)
+# 4. DETECTION (ENGINE + BUILT-IN HYBRID REGEX)
 # --------------------------------------------------------------------------- #
-_RE_EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
+try:
+    from app.robust_redactor import (
+        is_governance_term,
+        expand_name_span,
+        GOVERNANCE_STOPWORDS,
+        EXECUTIVE_ROSTER,
+        is_valid_person_name,
+        is_forbidden_name,
+        FORBIDDEN_NAME_WORDS,
+    )
+except ImportError:
+    try:
+        from robust_redactor import (
+            is_governance_term,
+            expand_name_span,
+            GOVERNANCE_STOPWORDS,
+            EXECUTIVE_ROSTER,
+            is_valid_person_name,
+            is_forbidden_name,
+            FORBIDDEN_NAME_WORDS,
+        )
+    except ImportError:
+        from src.redaction.robust_redactor import (
+            is_governance_term,
+            expand_name_span,
+            GOVERNANCE_STOPWORDS,
+            EXECUTIVE_ROSTER,
+            is_valid_person_name,
+            is_forbidden_name,
+            FORBIDDEN_NAME_WORDS,
+        )
+
+_RE_EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+(?:\s*@\s*)[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
 _RE_SSN = re.compile(r"(?<!\d)\d{3}-\d{2}-\d{4}(?!\d)")
-_RE_EMP = re.compile(r"\bEMP-\d{3,}\b")
+_RE_EMP = re.compile(r"\b(?:EMP|DIR)-\d{3,8}\b")
 _RE_EMP_LABEL = re.compile(r"(?i)\bemployee\s*(?:id|number|no\.?)\s*[:\-#]?\s*([A-Z]{0,4}-?\d{4,})\b")
 _RE_PAN = re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b")
-_RE_PHONE = re.compile(r"(?<!\d)(?:\+?1[\s.\-]?)?\(?\d{3}\)?[\s.\-]\d{3}[\s.\-]\d{4}(?!\d)")
+_RE_PHONE = re.compile(r"(?<!\d)(?:\+?\d{1,3}[\s.\-]?)?\(?\d{2,4}\)?[\s.\-]\d{3,4}[\s.\-]\d{4}(?!\d)")
 _RE_DOB = re.compile(
     r"(?i)\b(?:date\s+of\s+birth|d\.?\s?o\.?\s?b\.?|birthdate|born\s+on)\s*[:\-]?\s*"
     r"([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{1,2}[/-]\d{1,2}[/-]\d{2,4})")
@@ -299,14 +406,25 @@ _RE_ADDR = re.compile(
     re.IGNORECASE)
 _RE_CC_CANDIDATE = re.compile(r"(?<!\d)(?:\d[ -]?){12,19}(?!\d)")
 _RE_NAME_LABEL = re.compile(
-    r"(?i)\b(?:reviewer|owner|approver|name|contact|prepared\s+by|approved\s+by|"
-    r"submitted\s+by|reviewed\s+by|author|manager|signatory|attested\s+by|reported\s+by)\s*[:\-]\s*")
+    r"(?i:\b(?:reviewer|approver|person\s+name|full\s+name|employee\s+name|contact\s+person|"
+    r"prepared\s+by|approved\s+by|submitted\s+by|reviewed\s+by|signatory|attested\s+by|reported\s+by)\b)\s*[:\-]\s*"
+)
 _RE_NAME_VALUE = re.compile(r"([A-Z][a-zA-Z'.-]+(?:\s+[A-Z]\.?)?\s+[A-Z][a-zA-Z'.-]+)")
+_ROLE_LABEL_PREFIXES = (
+    r"policy\s+owner|policy\s+author|legal\s+reviewer|privacy\s+reviewer|approval\s+authority|"
+    r"chaired\s+by|incumbent|prepared\s+by|approved\s+by|submitted\s+by|reported\s+by|"
+    r"reviewed\s+by|attested\s+by|signatory|contact\s+person|lead\s+reviewer|chief\s+reviewer|"
+    r"committee\s+chair|chairperson|peer\s+reviewer|qa\s+reviewer"
+)
+_ROLE_LABEL_PATTERN = re.compile(
+    rf"(?i:\b(?:{_ROLE_LABEL_PREFIXES})\b)\s*[:\-]\s*"
+    r"([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+(?:-[A-Z][a-z]+)?)+)"
+)
 _NAME_STOPWORDS = {
     "the", "and", "for", "with", "this", "that", "from", "policy", "report", "review",
     "approval", "approved", "section", "appendix", "control", "controls", "cadence",
     "optiv", "new", "york", "united", "states", "document", "version", "date",
-}
+} | FORBIDDEN_NAME_WORDS
 _RE_NAME_CELL = re.compile(r"^([A-Z][a-zA-Z'.-]+\s+[A-Z][a-zA-Z'.-]+)$")
 
 
@@ -329,11 +447,12 @@ def _builtin_detect(document: Document) -> List[PIIEntity]:
         text = block.text or ""
         if not text.strip():
             continue
-        btype = (block.metadata or {}).get("block_type", "paragraph")
 
         def add(etype: str, start: int, end: int, conf: float, detector: str) -> None:
             snippet = text[start:end]
             if not snippet.strip():
+                return
+            if etype in ("PERSON", "PERSON_NAME") and not is_valid_person_name(snippet):
                 return
             entities.append(PIIEntity(
                 entity_type=etype, text=snippet, start=start, end=end,
@@ -342,7 +461,8 @@ def _builtin_detect(document: Document) -> List[PIIEntity]:
                           "source": (block.metadata or {}).get("source_type", "digital")}))
 
         for m in _RE_EMAIL.finditer(text):
-            add("EMAIL_ADDRESS", m.start(), m.end(), 0.99, "regex:email")
+            clean_e = m.group(0).rstrip(".,;:!?)]}>(\"'")
+            add("EMAIL_ADDRESS", m.start(), m.start() + len(clean_e), 0.99, "regex:email")
         for m in _RE_SSN.finditer(text):
             add("US_SSN", m.start(), m.end(), 0.97, "regex:ssn_format")
         for m in _RE_EMP.finditer(text):
@@ -352,7 +472,7 @@ def _builtin_detect(document: Document) -> List[PIIEntity]:
         for m in _RE_PAN.finditer(text):
             add("GOVERNMENT_ID", m.start(), m.end(), 0.98, "regex:pan_checksum_format")
         for m in _RE_PHONE.finditer(text):
-            add("PHONE_NUMBER", m.start(), m.end(), 0.90, "regex:phone_na")
+            add("PHONE_NUMBER", m.start(), m.end(), 0.90, "regex:phone")
         for m in _RE_DOB.finditer(text):
             add("DATE_OF_BIRTH", m.start(1), m.end(1), 0.95, "context:dob_label")
         for m in _RE_ADDR.finditer(text):
@@ -365,24 +485,38 @@ def _builtin_detect(document: Document) -> List[PIIEntity]:
                 add("CREDIT_CARD", m.start(), m.end(), 0.97, "checksum:luhn")
             elif 8 <= len(digits) <= 17:
                 add("ACCOUNT_NUMBER", m.start(), m.end(), 0.85, "format:account_number")
+
+        # Executive Roster matching
+        for exec_name in EXECUTIVE_ROSTER:
+            for m in re.finditer(rf"\b{re.escape(exec_name)}\b", text, re.IGNORECASE):
+                if is_valid_person_name(m.group(0)):
+                    add("PERSON", m.start(), m.end(), 0.99, "gazetteer:executive_roster")
+
+        # Role & Header context matching
+        for m in _ROLE_LABEL_PATTERN.finditer(text):
+            cand_name = m.group(1).strip().rstrip(".,;:")
+            c_start = m.start(1)
+            c_end = c_start + len(cand_name)
+            if is_valid_person_name(cand_name):
+                est, een, eval_ = expand_name_span(text, c_start, c_end)
+                if is_valid_person_name(eval_):
+                    add("PERSON", est, een, 0.95, "context:role_label")
+
         for m in _RE_NAME_LABEL.finditer(text):
-            window = text[m.end():m.end() + 60]
+            window = text[m.end():m.end() + 80]
             nm = _RE_NAME_VALUE.match(window)
             if nm:
-                add("PERSON", m.end() + nm.start(1), m.end() + nm.end(1),
-                    0.93, "context:name_label")
-        if btype == "table_cell":
-            nm = _RE_NAME_CELL.match(text.strip())
-            if nm:
-                words = nm.group(1).split()
-                if not any(w.lower() in _NAME_STOPWORDS for w in words):
-                    off = text.find(nm.group(1))
-                    add("PERSON", off, off + len(nm.group(1)), 0.78, "heuristic:table_cell_name")
+                c_start = m.end() + nm.start(1)
+                c_end = m.end() + nm.end(1)
+                cand_val = text[c_start:c_end]
+                if is_valid_person_name(cand_val):
+                    est, een, eval_ = expand_name_span(text, c_start, c_end)
+                    if is_valid_person_name(eval_):
+                        add("PERSON", est, een, 0.93, "context:name_label")
     return entities
 
 
 def _normalize_engine_output(result: Any, document: Document) -> Optional[List[PIIEntity]]:
-    """Normalize teammate detector output into List[PIIEntity]."""
     if result is None:
         return None
     if isinstance(result, dict):
@@ -473,15 +607,20 @@ def _resolve_overlaps(entities: List[PIIEntity]) -> List[PIIEntity]:
 
 
 def detect_pii(document: Document, threshold: float) -> List[PIIEntity]:
-    entities = _engine_detect(document)
-    if entities is None:
-        entities = _builtin_detect(document)
-    filtered = [e for e in entities if e.confidence >= threshold and (e.text or "").strip()]
+    eng_ents = _engine_detect(document) or []
+    builtin_ents = _builtin_detect(document) or []
+    combined = list(eng_ents) + list(builtin_ents)
+    filtered = [
+        e for e in combined
+        if e.confidence >= threshold
+        and (e.text or "").strip()
+        and not (e.entity_type in ("PERSON", "PERSON_NAME") and not is_valid_person_name(e.text))
+    ]
     return _resolve_overlaps(filtered)
 
 
 # --------------------------------------------------------------------------- #
-# 5. REDACTION + REPORT (team modules first, bulletproof fallbacks inside)
+# 5. REDACTION & AUDIT REPORTING
 # --------------------------------------------------------------------------- #
 def _fallback_redact_document(document: Document, entities: List[PIIEntity]
                               ) -> Tuple[List[Redaction], str, Document, List[Dict[str, Any]]]:
@@ -607,27 +746,146 @@ def generate_exposure_report(document: Document, entities: List[PIIEntity],
 
 
 # --------------------------------------------------------------------------- #
-# 6. METRIC HELPERS
+# 6. FAIL-SAFE NATIVE FILE EXPORTERS (DOCX / PPTX / PDF)
 # --------------------------------------------------------------------------- #
-def compute_structure_retention(document: Document) -> float:
-    md = document.metadata or {}
-    for key in ("structure_retention", "structure_retention_score"):
-        if key in md:
-            try:
-                val = float(md[key])
-                return val if val <= 1.0 else val / 100.0
-            except Exception:
-                pass
-    blocks = document.blocks
-    if not blocks:
-        return 0.0
-    with_pos = sum(1 for b in blocks if (b.metadata or {}).get("position"))
-    structural = sum(1 for b in blocks
-                     if (b.metadata or {}).get("block_type") in ("heading", "table_cell"))
-    score = 0.4 * (with_pos / len(blocks)) + 0.3 * min(1.0, (structural / len(blocks)) * 3) + 0.3
-    return round(min(1.0, score), 4)
+def export_redacted_docx(raw_bytes: bytes, redactions: List[Redaction], entities: List[PIIEntity]) -> bytes:
+    import docx as _docx_mod
+    doc = _docx_mod.Document(io.BytesIO(raw_bytes))
+
+    tag_map: Dict[str, str] = {}
+    for r in redactions:
+        val = (getattr(r, "original_text", "") or "").strip()
+        rep = getattr(r, "replacement", "[REDACTED]")
+        if val:
+            tag_map[val] = rep
+    for e in entities:
+        val = (getattr(e, "text", "") or "").strip()
+        if val and val not in tag_map:
+            tag_map[val] = f"[{TAG_PREFIX.get(e.entity_type, e.entity_type.upper())}]"
+
+    replacements = sorted(tag_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    def _replace_in_paragraph(para):
+        full_text = para.text
+        for orig, rep in replacements:
+            if orig in full_text:
+                full_text = full_text.replace(orig, rep)
+        if full_text != para.text:
+            para.text = full_text
+
+    for p in doc.paragraphs:
+        _replace_in_paragraph(p)
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    _replace_in_paragraph(p)
+
+    out = io.BytesIO()
+    doc.save(out)
+    return out.getvalue()
 
 
+def export_redacted_pptx(raw_bytes: bytes, redactions: List[Redaction], entities: List[PIIEntity]) -> bytes:
+    from pptx import Presentation
+    prs = Presentation(io.BytesIO(raw_bytes))
+
+    tag_map: Dict[str, str] = {}
+    for r in redactions:
+        val = (getattr(r, "original_text", "") or "").strip()
+        rep = getattr(r, "replacement", "[REDACTED]")
+        if val:
+            tag_map[val] = rep
+    for e in entities:
+        val = (getattr(e, "text", "") or "").strip()
+        if val and val not in tag_map:
+            tag_map[val] = f"[{TAG_PREFIX.get(e.entity_type, e.entity_type.upper())}]"
+
+    replacements = sorted(tag_map.items(), key=lambda x: len(x[0]), reverse=True)
+
+    def _replace_in_frame(tf):
+        for para in tf.paragraphs:
+            full_text = para.text
+            for orig, rep in replacements:
+                if orig in full_text:
+                    full_text = full_text.replace(orig, rep)
+            if full_text != para.text:
+                para.text = full_text
+
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if getattr(shape, "has_text_frame", False) and shape.has_text_frame:
+                _replace_in_frame(shape.text_frame)
+            if getattr(shape, "has_table", False) and shape.has_table:
+                for row in shape.table.rows:
+                    for cell in row.cells:
+                        _replace_in_frame(cell.text_frame)
+
+    out = io.BytesIO()
+    prs.save(out)
+    return out.getvalue()
+
+
+def export_redacted_pdf(
+    raw_bytes: bytes,
+    redactions: List[Redaction],
+    entities: List[PIIEntity],
+    blocks: List[TextBlock],
+    progress=None,
+) -> bytes:
+    """
+    PDF redaction via app/robust_redactor.py.
+    Image-only PDFs (e.g. Word "save as picture") have no text layer, so pages are OCR'd
+    and the OCR word boxes are redacted (pixels under each box are blanked).
+    """
+    if not raw_bytes:
+        raise ValueError("Original PDF bytes are missing.")
+    try:
+        from app.robust_redactor import redact_pdf_parallel
+    except ImportError:
+        try:
+            from robust_redactor import redact_pdf_parallel
+        except ImportError:
+            from src.redaction.robust_redactor import redact_pdf_parallel
+
+    literals: Dict[str, str] = {}
+    for r in redactions:
+        t = (getattr(r, "original_text", "") or "").strip().rstrip(".,;:!?)]}>(\"'")
+        if len(t) >= 3:
+            etype = getattr(r, "entity_type", "")
+            if etype in ("PERSON", "PERSON_NAME") and not is_valid_person_name(t):
+                continue
+            literals[t] = f"[{TAG_PREFIX.get(etype, str(etype).upper())}]"
+    for e in entities:
+        t = (getattr(e, "text", "") or "").strip().rstrip(".,;:!?)]}>(\"'")
+        if len(t) >= 3:
+            etype = getattr(e, "entity_type", "")
+            if etype in ("PERSON", "PERSON_NAME") and not is_valid_person_name(t):
+                continue
+            literals.setdefault(t, f"[{TAG_PREFIX.get(etype, etype.upper())}]")
+
+    out, stats = redact_pdf_parallel(raw_bytes, literals=literals, progress=progress)
+    if stats["leaks"]:
+        raise RuntimeError(f"Zero-leakage check failed: {len(stats['leaks'])} residual match(es), "
+                           f"e.g. {stats['leaks'][:3]}")
+    return out
+
+
+def generate_native_export(filename: str, raw_bytes: bytes, redactions: List[Redaction],
+                           entities: List[PIIEntity], blocks: List[TextBlock]) -> Tuple[Optional[bytes], str, str]:
+    ext = Path(filename).suffix.lower()
+    if ext == ".docx":
+        return export_redacted_docx(raw_bytes, redactions, entities), f"{Path(filename).stem}_redacted.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif ext == ".pptx":
+        return export_redacted_pptx(raw_bytes, redactions, entities), f"{Path(filename).stem}_redacted.pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    elif ext == ".pdf":
+        return export_redacted_pdf(raw_bytes, redactions, entities, blocks), f"{Path(filename).stem}_redacted.pdf", "application/pdf"
+    return None, "", ""
+
+
+# --------------------------------------------------------------------------- #
+# 7. METRIC HELPERS & ZERO-LEAKAGE CHECK
+# --------------------------------------------------------------------------- #
 def risk_badge(risk: str) -> str:
     cls = {"CRITICAL": "risk-critical", "HIGH": "risk-high", "MEDIUM": "risk-medium",
            "LOW": "risk-low", "NONE": "risk-none"}.get(risk, "risk-none")
@@ -656,28 +914,26 @@ def records_to_csv(records: List[Dict[str, Any]]) -> str:
 
 
 # --------------------------------------------------------------------------- #
-# 7. PIPELINE ORCHESTRATION
+# 8. PIPELINE ORCHESTRATION
 # --------------------------------------------------------------------------- #
 def run_pipeline(path: Union[str, Path], threshold: float) -> Dict[str, Any]:
     filename = Path(path).name
-    with st.status(f"Running pipeline: {filename}", expanded=True) as status:
-        st.write("1/5 Ingestion - routing artifact by file type ...")
+    with st.status(f"Processing artifact: {filename}", expanded=True) as status:
+        st.write("1/5 Ingestion — routing artifact by file format...")
         document = route_and_extract(path)
-        st.write(f"2/5 Extraction - {len(document.blocks)} structural blocks retained "
-                 f"(2D reading order, table context, OCR confidence flags)")
+        st.write(f"2/5 Extraction — {len(document.blocks)} structural blocks extracted.")
         entities = detect_pii(document, threshold)
-        st.write(f"3/5 Detection - {len(entities)} PII entities above {threshold:.2f} confidence")
+        st.write(f"3/5 Detection — {len(entities)} sensitive entities identified.")
         redactions, redacted_text, redacted_doc, trace = redact_document(document, entities)
-        st.write(f"4/5 Redaction - {len(redactions)} deterministic transparent tags applied")
+        st.write(f"4/5 Redaction — {len(redactions)} transparent tags applied.")
         report = generate_exposure_report(document, entities, redactions, trace, redacted_text)
-        st.write("5/5 Audit Report - exposure report + compliance traceability log generated")
-        status.update(label=f"{filename} - Risk: {report.get('risk_level', 'NONE')}",
-                      state="complete")
+        st.write("5/5 Audit Report — Exposure and compliance reports ready.")
+        status.update(label=f"Completed: {filename} (Risk: {report.get('risk_level', 'NONE')})", state="complete")
+
     return {
         "document": document, "entities": entities, "redactions": redactions,
         "redacted_text": redacted_text, "redacted_doc": redacted_doc,
         "trace": trace, "report": report,
-        "structure_retention": compute_structure_retention(document),
     }
 
 
@@ -693,18 +949,30 @@ def find_sample_files() -> List[Path]:
 
 def process_uploaded_files(uploaded_files, threshold: float) -> None:
     for up in uploaded_files:
-        if up.name in st.session_state.results:
-            continue
         suffix = Path(up.name).suffix.lower()
         if suffix not in (".docx", ".pdf", ".pptx"):
             st.warning(f"Skipped {up.name}: unsupported type {suffix}")
             continue
+
+        file_bytes = up.getvalue()
+        st.session_state.raw_files[up.name] = file_bytes
+
+        if up.name in st.session_state.results:
+            res_doc = st.session_state.results[up.name].get("document")
+            if res_doc:
+                st.session_state.raw_files[res_doc.filename] = file_bytes
+            continue
+
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
         try:
-            tmp.write(up.getbuffer())
+            tmp.write(file_bytes)
             tmp.close()
-            st.session_state.results[up.name] = run_pipeline(tmp.name, threshold)
-        except Exception as exc:  # demo must never crash
+            result = run_pipeline(tmp.name, threshold)
+            st.session_state.results[up.name] = result
+
+            if result.get("document"):
+                st.session_state.raw_files[result["document"].filename] = file_bytes
+        except Exception as exc:
             st.error(f"Failed to process {up.name}: {exc}")
         finally:
             try:
@@ -713,22 +981,8 @@ def process_uploaded_files(uploaded_files, threshold: float) -> None:
                 pass
 
 
-def load_sample_files(threshold: float) -> None:
-    samples = find_sample_files()
-    if not samples:
-        st.info("No sample artifacts found in tests/data, test_data, samples, data or examples.")
-        return
-    for s in samples:
-        if s.name in st.session_state.results:
-            continue
-        try:
-            st.session_state.results[s.name] = run_pipeline(s, threshold)
-        except Exception as exc:
-            st.error(f"Failed to process sample {s.name}: {exc}")
-
-
 # --------------------------------------------------------------------------- #
-# 8. UI - CSS / THEME
+# 9. UI & STYLING
 # --------------------------------------------------------------------------- #
 def inject_css() -> None:
     st.markdown("""
@@ -743,22 +997,21 @@ def inject_css() -> None:
   display: flex; align-items: center; justify-content: space-between;
   padding: 18px 26px; border: 1px solid var(--border); border-radius: 16px;
   background: linear-gradient(120deg, rgba(56,189,248,.10), rgba(129,140,248,.10)), var(--panel);
-  backdrop-filter: blur(10px); margin-bottom: 18px;
+  backdrop-filter: blur(10px); margin-bottom: 22px;
 }
 .brand-left { font-weight: 800; font-size: 22px; letter-spacing: 2px; color: #38bdf8; }
 .brand-mid { text-align: center; }
-.brand-mid .title { font-size: 24px; font-weight: 700; }
-.brand-mid .sub { color: var(--mut); font-size: 13px; }
+.brand-mid .title { font-size: 24px; font-weight: 700; color: #f8fafc; }
+.brand-mid .sub { color: var(--mut); font-size: 13px; margin-top: 2px; }
 .brand-right { font-weight: 800; font-size: 22px; letter-spacing: 2px; color: #f8fafc; }
 .kpi-card {
   border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px;
   background: var(--panel); backdrop-filter: blur(8px); min-height: 108px;
 }
 .kpi-card .kpi-label { color: var(--mut); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-.kpi-card .kpi-value { font-size: 30px; font-weight: 800; margin-top: 4px; }
+.kpi-card .kpi-value { font-size: 28px; font-weight: 800; margin-top: 4px; color: #f8fafc; }
 .kpi-card .kpi-foot { font-size: 12px; margin-top: 4px; }
-.pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 12px;
-        font-weight: 700; letter-spacing: .5px; }
+.pill { display: inline-block; padding: 3px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .risk-critical { background: rgba(239,68,68,.18); color: #f87171; border: 1px solid rgba(239,68,68,.5); }
 .risk-high { background: rgba(249,115,22,.18); color: #fb923c; border: 1px solid rgba(249,115,22,.5); }
 .risk-medium { background: rgba(245,158,11,.18); color: #fbbf24; border: 1px solid rgba(245,158,11,.5); }
@@ -768,15 +1021,12 @@ def inject_css() -> None:
   background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.45); color: #34d399; font-weight: 700;
 }
 .shield-bad { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.5); color: #f87171; }
-.panel { border: 1px solid var(--border); border-radius: 14px; background: var(--panel);
-         padding: 16px; backdrop-filter: blur(8px); }
-.doc-pane { border: 1px solid var(--border); border-radius: 12px; padding: 14px;
-            background: rgba(11,18,32,.6); max-height: 560px; overflow-y: auto; font-size: 14px; line-height: 1.7; }
+.panel { border: 1px solid var(--border); border-radius: 14px; background: var(--panel); padding: 16px; backdrop-filter: blur(8px); }
+.doc-pane { border: 1px solid var(--border); border-radius: 12px; padding: 14px; background: rgba(11,18,32,.6); max-height: 560px; overflow-y: auto; font-size: 14px; line-height: 1.7; }
 .doc-pane h4 { color: var(--accent); margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
 .block-label { color: var(--mut); font-size: 11px; margin: 14px 0 2px 0; font-family: monospace; }
 .heading-block { font-weight: 700; font-size: 16px; color: #f1f5f9; }
-pre.safe-text { white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.7;
-                color: #d1fae5; background: rgba(6,26,20,.5); padding: 12px; border-radius: 10px; }
+pre.safe-text { white-space: pre-wrap; word-wrap: break-word; font-size: 13px; line-height: 1.7; color: #d1fae5; background: rgba(6,26,20,.5); padding: 12px; border-radius: 10px; }
 mark { padding: 1px 5px; border-radius: 6px; font-weight: 700; color: #0b1220; }
 mark.mk-person { background: #7dd3fc; } mark.mk-employee_id { background: #c4b5fd; }
 mark.mk-email_address { background: #67e8f9; } mark.mk-phone_number { background: #5eead4; }
@@ -790,60 +1040,43 @@ mark.mk-date_of_birth { background: #fde68a; } mark.mk-address { background: #86
 .bar-row .bar-val { width: 44px; text-align: right; font-weight: 700; }
 .stage-line { font-size: 13px; margin: 4px 0; color: var(--mut); }
 .stage-done { color: #34d399; font-weight: 700; }
-.risk-banner { padding: 14px 18px; border-radius: 12px; font-weight: 600; margin: 10px 0;
-               border: 1px solid var(--border); }
+.risk-banner { padding: 14px 18px; border-radius: 12px; font-weight: 600; margin: 10px 0; border: 1px solid var(--border); }
 .justification { font-size: 13px; color: var(--mut); margin-top: 6px; }
-.stTabs [data-baseweb="tab-list"] { gap: 6px; }
+.export-card { border: 1px solid rgba(56,189,248,.3); border-radius: 12px; padding: 14px; background: rgba(56,189,248,.05); margin-top: 14px; }
 footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
 
-# --------------------------------------------------------------------------- #
-# 9. UI - SECTION RENDERERS
-# --------------------------------------------------------------------------- #
 def render_header() -> None:
     st.markdown("""
 <div class="brand-banner">
-  <div class="brand-left">OPTIV</div>
-  <div class="brand-mid">
-    <div class="title">PII Shield &mdash; Cyber Risk &amp; Compliance Dashboard</div>
-    <div class="sub">Cadence Financial Services &times; Optiv Consulting &nbsp;|&nbsp;
-    LLM Evidence Sanitization Pipeline &nbsp;|&nbsp; Deterministic Redaction &amp; Audit Vault</div>
+  <div class="brand-mid" style="text-align:left">
+    <div class="title">Cadence PII Shield</div>
+    <div class="sub">Detect &bull; Redact &bull; Export &bull; Audit</div>
   </div>
-  <div class="brand-right">CADENCE</div>
 </div>
 """, unsafe_allow_html=True)
 
 
 def render_sidebar() -> Tuple[float, List[str]]:
-    st.sidebar.markdown("### 🛡 Pipeline Controls")
-    threshold = st.sidebar.slider("Detection confidence threshold", 0.50, 1.00, 0.75, 0.05)
+    st.sidebar.markdown("### ⚙️ Controls")
+    threshold = st.sidebar.slider("Detection Confidence Threshold", 0.50, 1.00, 0.75, 0.05)
     type_filter = st.sidebar.multiselect(
-        "PII type filter (empty = all)",
+        "Redact only these categories (default: all)",
         options=ALL_TYPES,
-        format_func=lambda t: f"{TYPE_SHORT[t]} ({SENSITIVITY[t]})",
+        format_func=lambda t: f"{TYPE_SHORT.get(t, t)} ({SENSITIVITY.get(t, 'LOW')})",
         default=[])
     st.sidebar.markdown("---")
     uploaded = st.sidebar.file_uploader(
-        "Drop artifacts (.docx / .pdf / .pptx)",
+        "Upload (.pdf, .docx, .pptx)",
         type=["docx", "pdf", "pptx"], accept_multiple_files=True)
     if uploaded:
         process_uploaded_files(uploaded, threshold)
-    st.sidebar.markdown("---")
-    if st.sidebar.button("⬇ Load Official Sample Test Files", use_container_width=True):
-        load_sample_files(threshold)
-    samples = find_sample_files()
-    if samples:
-        st.sidebar.caption("Samples on disk: " + ", ".join(s.name for s in samples))
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("**Pipeline Stage Indicator**")
-    for i, stage in enumerate(PIPELINE_STAGES, start=1):
-        st.sidebar.markdown(f'<div class="stage-line">{i}. {stage} '
-                            f'<span class="stage-done">●</span></div>',
-                            unsafe_allow_html=True)
-    if st.sidebar.button("🗑 Clear processed artifacts"):
+    if st.sidebar.button("🗑 Reset session"):
         st.session_state.results = {}
+        st.session_state.raw_files = {}
+        st.session_state.exports = {}
         st.rerun()
     return threshold, type_filter
 
@@ -851,13 +1084,20 @@ def render_sidebar() -> Tuple[float, List[str]]:
 def apply_type_filter(results: Dict[str, Any], type_filter: List[str]) -> Dict[str, Any]:
     if not type_filter:
         return results
-    keep = set(type_filter)
+    keep = set()
+    for t in type_filter:
+        keep.add(t)
+        for alias, canon in CANONICAL_TYPE_MAP.items():
+            if canon == t or alias == t:
+                keep.add(alias)
+                keep.add(canon)
+
     out = dict(results)
-    out["entities"] = [e for e in results["entities"] if e.entity_type in keep]
-    out["redactions"] = [r for r in results["redactions"] if r.entity_type in keep]
-    out["trace"] = [t for t in results["trace"] if t.get("pii_type") in keep]
+    out["entities"] = [e for e in results["entities"] if e.entity_type in keep or CANONICAL_TYPE_MAP.get(e.entity_type) in keep]
+    out["redactions"] = [r for r in results["redactions"] if r.entity_type in keep or CANONICAL_TYPE_MAP.get(r.entity_type) in keep]
+    out["trace"] = [t for t in results["trace"] if t.get("pii_type") in keep or CANONICAL_TYPE_MAP.get(t.get("pii_type")) in keep]
     report = dict(results["report"])
-    counts = {k: v for k, v in report.get("counts_by_type", {}).items() if k in keep}
+    counts = {k: v for k, v in report.get("counts_by_type", {}).items() if k in keep or CANONICAL_TYPE_MAP.get(k) in keep}
     report["counts_by_type"] = counts
     report["total_pii_found"] = sum(counts.values())
     report["total_redactions_applied"] = len(out["redactions"])
@@ -876,39 +1116,28 @@ def apply_type_filter(results: Dict[str, Any], type_filter: List[str]) -> Dict[s
 def render_portfolio_summary() -> None:
     results = st.session_state.results
     if not results:
-        st.info("Upload artifacts via the sidebar, or click "
-                "'Load Official Sample Test Files' to begin the demonstration.")
+        st.info("Upload a document in the sidebar to start.")
         return
-    total_blocks = sum(len(r["document"].blocks) for r in results.values())
     total_pii = sum(r["report"].get("total_pii_found", 0) for r in results.values())
-    retention_scores = [r["structure_retention"] * 100 for r in results.values()]
-    avg_retention = sum(retention_scores) / len(retention_scores) if retention_scores else 0
     highest = "NONE"
     for r in results.values():
         lvl = r["report"].get("risk_level", "NONE")
         if RISK_ORDER.get(lvl, 0) > RISK_ORDER.get(highest, 0):
             highest = lvl
-
-    c1, c2, c3, c4, c5 = st.columns(5)
     cards = [
-        (c1, "Artifacts Processed", str(len(results)), "multi-format batch"),
-        (c2, "Structural Blocks", f"{total_blocks:,}", "2D reading order retained"),
-        (c3, "Structure Retention", f"{avg_retention:.0f}%",
-         "✅ ≥ 80% target met" if avg_retention >= 80 else "⚠ below 80% target"),
-        (c4, "PII Entities Redacted", f"{total_pii:,}", "transparent tags applied"),
-        (c5, "Portfolio Risk", f'<span class="pill { "risk-" + highest.lower() }">{highest}</span>', "highest artifact level"),
+        ("Documents", str(len(results))),
+        ("PII Entities Found", f"{total_pii:,}"),
+        ("Highest Risk", f'<span class="pill risk-{highest.lower()}">{highest}</span>'),
     ]
-    for col, label, value, foot in cards:
-        with col:
-            st.markdown(f'<div class="kpi-card"><div class="kpi-label">{label}</div>'
-                        f'<div class="kpi-value">{value}</div>'
-                        f'<div class="kpi-foot">{foot}</div></div>', unsafe_allow_html=True)
+    for col, (label, value) in zip(st.columns(3), cards):
+        col.markdown(f'<div class="kpi-card"><div class="kpi-label">{label}</div>'
+                     f'<div class="kpi-value">{value}</div></div>', unsafe_allow_html=True)
     st.markdown("")
 
 
 def html_bar_chart(counts: Dict[str, int], unit: str = "") -> str:
     if not counts:
-        return '<div class="panel" style="color:#94a3b8">No data to chart.</div>'
+        return '<div class="panel" style="color:#94a3b8">No items recorded.</div>'
     maxv = max(counts.values()) or 1
     rows = []
     for label, val in sorted(counts.items(), key=lambda kv: -kv[1]):
@@ -919,7 +1148,7 @@ def html_bar_chart(counts: Dict[str, int], unit: str = "") -> str:
     return '<div class="panel">' + "".join(rows) + "</div>"
 
 
-def render_comparison_tab(res: Dict[str, Any]) -> None:
+def render_comparison_tab(res: Dict[str, Any], selected_key: str = "") -> None:
     doc: Document = res["document"]
     entities: List[PIIEntity] = res["entities"]
     per_block: Dict[str, List[PIIEntity]] = {}
@@ -937,8 +1166,7 @@ def render_comparison_tab(res: Dict[str, Any]) -> None:
                 continue
             parts.append(html.escape(text[cursor:e.start]))
             cls = "mk-" + e.entity_type.lower()
-            parts.append(f'<mark class="{cls}" title="{e.entity_type} '
-                         f'(conf {e.confidence:.2f})">{html.escape(text[e.start:e.end])}</mark>')
+            parts.append(f'<mark class="{cls}" title="{e.entity_type} (conf {e.confidence:.2f})">{html.escape(text[e.start:e.end])}</mark>')
             cursor = e.end
         parts.append(html.escape(text[cursor:]))
         body = "".join(parts).replace("\n", "<br>")
@@ -953,80 +1181,86 @@ def render_comparison_tab(res: Dict[str, Any]) -> None:
 
     left, right = st.columns(2)
     with left:
-        st.markdown("#### ⚠ Raw Evidence - Highlighted PII")
-        st.markdown(f'<div class="doc-pane"><h4>Extracted text - color-coded PII marks</h4>{raw_html}</div>',
-                    unsafe_allow_html=True)
+        st.markdown("#### Raw Evidence (Detected PII)")
+        st.markdown(f'<div class="doc-pane"><h4>Extracted Source Elements</h4>{raw_html}</div>', unsafe_allow_html=True)
     with right:
-        st.markdown("#### ✅ Safe Redacted Output - LLM Ready")
+        st.markdown("#### Redacted Output (Sanitized)")
         ok, leaked = verify_zero_leakage(res["entities"], res["redacted_text"])
         if ok:
-            st.markdown('<div class="shield">🛡 ZERO PII LEAKAGE - LLM READY</div>',
-                        unsafe_allow_html=True)
+            st.markdown('<div class="shield">🛡 ZERO PII LEAKAGE VERIFIED</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="shield shield-bad">⛔ Potential residual PII: {len(leaked)} token(s)</div>',
-                        unsafe_allow_html=True)
-        st.markdown(f'<div class="doc-pane"><h4>Sanitized payload - transparent tags</h4>{safe_html}</div>',
-                    unsafe_allow_html=True)
-    st.markdown("##### Export Safe LLM Prompt Payload")
-    e1, e2 = st.columns(2)
-    payload_json = json.dumps({
-        "artifact": doc.filename,
-        "instruction": "Analyze this sanitized Cadence business document. PII appears only as opaque placeholders.",
-        "safe_text": res["redacted_text"],
-    }, indent=2)
-    e1.download_button("⬇ Download safe payload (.txt)", res["redacted_text"],
-                       file_name=f"{Path(doc.filename).stem}_safe_llm.txt", mime="text/plain",
-                       use_container_width=True)
-    e2.download_button("⬇ Download safe payload (.json)", payload_json,
-                       file_name=f"{Path(doc.filename).stem}_safe_llm.json", mime="application/json",
-                       use_container_width=True)
+            st.markdown(f'<div class="shield shield-bad">⛔ Potential Residual PII: {len(leaked)} token(s)</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="doc-pane"><h4>Sanitized Payload</h4>{safe_html}</div>', unsafe_allow_html=True)
+
+    render_export_section(res, selected_key)
 
 
-def render_structure_tab(res: Dict[str, Any]) -> None:
+def _find_raw_bytes(doc: Document, selected_key: str) -> Optional[bytes]:
+    raw = (st.session_state.raw_files.get(selected_key)
+           or st.session_state.raw_files.get(doc.filename))
+    if not raw and len(st.session_state.raw_files) == 1:
+        raw = next(iter(st.session_state.raw_files.values()))
+    if not raw:
+        for smp in find_sample_files():
+            if smp.name in (selected_key, doc.filename) and smp.exists():
+                raw = smp.read_bytes()
+                break
+    return raw
+
+
+def _export_cache_key(raw: bytes, res: Dict[str, Any]) -> str:
+    h = hashlib.sha256(raw)
+    for t in sorted({(e.entity_type, e.text) for e in res["entities"]}):
+        h.update(repr(t).encode("utf-8", "ignore"))
+    return h.hexdigest()
+
+
+def render_export_section(res: Dict[str, Any], selected_key: str) -> None:
     doc: Document = res["document"]
-    retention = res["structure_retention"] * 100
-    by_type: Dict[str, int] = {}
-    by_source: Dict[str, int] = {}
-    low_conf = []
-    for b in doc.blocks:
-        md = b.metadata or {}
-        by_type[md.get("block_type", "paragraph")] = by_type.get(md.get("block_type", "paragraph"), 0) + 1
-        by_source[md.get("source_type", "unknown")] = by_source.get(md.get("source_type", "unknown"), 0) + 1
-        if md.get("low_confidence_flag"):
-            low_conf.append(b)
+    name = doc.filename or selected_key
+    stem, ext = Path(name).stem, Path(name).suffix.lower()
+    cache = st.session_state.setdefault("exports", {})
+    raw = _find_raw_bytes(doc, selected_key)
 
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Structure Retention Score", f"{retention:.1f}%",
-              delta="≥ 80% target met" if retention >= 80 else "below target",
-              delta_color="normal" if retention >= 80 else "inverse")
-    c2.metric("Low-Confidence OCR Blocks", str(len(low_conf)),
-              delta="flagged for auditor review" if low_conf else "none flagged")
-    c3.metric("Digital vs Scanned Pages/Slides",
-              f"{by_source.get('digital', 0) + by_source.get('digital_pdf', 0)} digital / "
-              f"{by_source.get('scanned_ocr', 0)} scanned")
+    st.markdown("##### 📥 Downloads")
+    c_native, c_txt = st.columns(2)
 
-    st.markdown("**Structural composition** (headings, paragraphs, table cells)")
-    st.markdown(html_bar_chart(by_type), unsafe_allow_html=True)
-    st.markdown("**Source composition**")
-    st.markdown(html_bar_chart(by_source), unsafe_allow_html=True)
+    with c_native:
+        if not raw:
+            st.info("Original file bytes missing. Re-upload the document to enable export.")
+        elif ext == ".pdf":
+            key = _export_cache_key(raw, res)
+            if key not in cache:
+                st.caption("Scanned / image-only PDFs are OCR'd page by page, which can take a minute or two.")
+                if st.button("⚙ Generate redacted PDF", key=f"gen_{key[:16]}", use_container_width=True):
+                    bar = st.progress(0.0, text="Starting OCR + redaction...")
+                    try:
+                        cache[key] = export_redacted_pdf(
+                            raw, res["redactions"], res["entities"], doc.blocks,
+                            progress=lambda d, n: bar.progress(d / n, text=f"Redacted {d}/{n} pages"))
+                        failed = None
+                    except Exception as exc:
+                        failed = exc
+                    bar.empty()
+                    if failed is not None:
+                        st.error(f"PDF export failed: {failed}")
+                    else:
+                        st.rerun()
+            if key in cache:
+                st.download_button("⬇ Download Redacted PDF", data=cache[key],
+                                   file_name=f"{stem}_redacted.pdf", mime="application/pdf",
+                                   use_container_width=True)
+        else:
+            data, out_name, mime = generate_native_export(
+                name, raw, res["redactions"], res["entities"], doc.blocks)
+            if data:
+                st.download_button(f"⬇ Download Redacted {ext.upper().lstrip('.')}", data=data,
+                                   file_name=out_name, mime=mime, use_container_width=True)
 
-    st.markdown("#### Low-Confidence OCR Inspector")
-    if not low_conf:
-        st.success("No low-confidence OCR blocks. Every scanned region passed the 75% confidence floor.")
-        return
-    st.warning(f"{len(low_conf)} block(s) below 75% OCR confidence - these regions are flagged so PII is never silently missed.")
-    records = [{
-        "block_id": b.block_id,
-        "page": b.page_number,
-        "block_type": (b.metadata or {}).get("block_type"),
-        "confidence": (b.metadata or {}).get("confidence"),
-        "low_confidence_words": ", ".join((b.metadata or {}).get("low_confidence_words", [])[:10]),
-        "preview": (b.text or "")[:120],
-    } for b in low_conf]
-    if _HAVE_PANDAS:
-        st.dataframe(pd.DataFrame(records), use_container_width=True, hide_index=True)
-    else:
-        st.table(records)
+    with c_txt:
+        st.download_button("⬇ Download Safe Text (.txt)", res["redacted_text"],
+                           file_name=f"{stem}_sanitized.txt", mime="text/plain",
+                           use_container_width=True)
 
 
 def render_audit_tab(res: Dict[str, Any]) -> None:
@@ -1035,54 +1269,51 @@ def render_audit_tab(res: Dict[str, Any]) -> None:
     counts = report.get("counts_by_type", {})
     tiers = report.get("counts_by_sensitivity", {})
     justifications = {
-        "CRITICAL": "Government identifiers, SSNs or payment card/account numbers were present. "
-                    "Regulatory exposure (GLBA / NYDFS 500 / PCI-DSS). Immediate remediation required.",
-        "HIGH": "Employee identifiers or dates of birth were exposed. Identity-theft and insider-risk exposure.",
-        "MEDIUM": "Direct contact data (email, phone, address) was exposed. Phishing / social-engineering risk.",
-        "LOW": "Only person names were exposed. Combined with other artifacts this can still enable profiling.",
-        "NONE": "No PII detected above the confidence threshold. Artifact is safe for LLM ingestion as-is.",
+        "CRITICAL": "Critical regulatory identifiers or financial credentials were detected. Strict masking required.",
+        "HIGH": "Employee IDs or sensitive demographic attributes detected. Identity protection measures active.",
+        "MEDIUM": "Direct contact details present. Phishing/harvesting risk mitigated.",
+        "LOW": "Person names detected. Basic anonymization applied.",
+        "NONE": "No sensitive PII detected above threshold.",
     }
-    st.markdown(f"**Exposure posture:** {risk_badge(risk)}")
+    st.markdown(f"**Document Exposure Posture:** {risk_badge(risk)}")
     st.markdown(f'<div class="risk-banner panel">{html.escape(justifications.get(risk, ""))}'
                 f'<div class="justification">{html.escape(report.get("audit_summary", ""))}</div></div>',
                 unsafe_allow_html=True)
 
     left, right = st.columns(2)
     with left:
-        st.markdown("**PII counts by category**")
+        st.markdown("**Entity Counts by Category**")
         st.markdown(html_bar_chart(counts), unsafe_allow_html=True)
     with right:
-        st.markdown("**PII counts by sensitivity tier**")
+        st.markdown("**Entity Counts by Risk Level**")
         st.markdown(html_bar_chart(tiers), unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("Total PII found", report.get("total_pii_found", 0))
-    c2.metric("Redactions applied", report.get("total_redactions_applied", 0))
-    c3.metric("Low-confidence OCR blocks", len(report.get("low_confidence_ocr_blocks", [])))
+    c1.metric("Total Identified Entities", report.get("total_pii_found", 0))
+    c2.metric("Redactions Applied", report.get("total_redactions_applied", 0))
+    c3.metric("Flagged OCR Regions", len(report.get("low_confidence_ocr_blocks", [])))
 
-    st.markdown("##### Download Audit Exposure Report")
+    st.markdown("##### Download Compliance Audit Reports")
     d1, d2 = st.columns(2)
     report_json = json.dumps(report, indent=2, default=str)
-    d1.download_button("⬇ Audit report (.json)", report_json,
-                       file_name=f"{Path(report.get('filename', 'artifact')).stem}_audit_report.json",
+    d1.download_button("⬇ Download Audit Report (.json)", report_json,
+                       file_name=f"{Path(report.get('filename', 'artifact')).stem}_audit.json",
                        mime="application/json", use_container_width=True)
     flat_records = [{
         "filename": report.get("filename"), "risk_level": risk,
         "entity_type": k, "count": v, "sensitivity": SENSITIVITY.get(k, "LOW"),
     } for k, v in counts.items()]
-    d2.download_button("⬇ Audit report (.csv)", records_to_csv(flat_records),
-                       file_name=f"{Path(report.get('filename', 'artifact')).stem}_audit_report.csv",
+    d2.download_button("⬇ Download Audit Report (.csv)", records_to_csv(flat_records),
+                       file_name=f"{Path(report.get('filename', 'artifact')).stem}_audit.csv",
                        mime="text/csv", use_container_width=True)
 
 
 def render_traceability_tab(res: Dict[str, Any]) -> None:
     trace: List[Dict[str, Any]] = list(res["trace"])
-    st.markdown("Compliance vault - the mapping between transparent tags and original values. "
-                "**This log is never transmitted to the LLM.**")
-    col_a, col_b, col_c = st.columns([2, 1, 1])
-    query = col_a.text_input("🔍 Search traceability log", "")
-    reveal = col_b.toggle("Reveal raw PII values", value=False)
-    export_all = col_c.checkbox("Include raw values in exports", value=False)
+    st.markdown("Audit Log — Real-time mapping of applied tags to original text spans.")
+    col_a, col_b = st.columns([3, 1])
+    query = col_a.text_input("🔍 Search Traceability Log", "")
+    reveal = col_b.toggle("Reveal Original Values", value=False)
 
     rows = trace
     if query:
@@ -1091,7 +1322,7 @@ def render_traceability_tab(res: Dict[str, Any]) -> None:
     display_rows = []
     for t in rows:
         r = dict(t)
-        if not (reveal or export_all):
+        if not reveal:
             r["original_text"] = "•" * min(12, max(6, len(str(r.get("original_text", "")))))
         display_rows.append(r)
 
@@ -1099,57 +1330,10 @@ def render_traceability_tab(res: Dict[str, Any]) -> None:
         st.dataframe(pd.DataFrame(display_rows), use_container_width=True, hide_index=True)
     else:
         st.table(display_rows)
-    st.caption(f"{len(display_rows)} traceability record(s)")
+    st.caption(f"{len(display_rows)} log records")
 
-    e1, e2 = st.columns(2)
-    export_rows = display_rows if not export_all else rows
-    e1.download_button("⬇ Traceability log (.csv)", records_to_csv(export_rows),
-                       file_name="source_traceability_log.csv", mime="text/csv",
-                       use_container_width=True)
-    e2.download_button("⬇ Traceability log (.json)", json.dumps(export_rows, indent=2, default=str),
-                       file_name="source_traceability_log.json", mime="application/json",
-                       use_container_width=True)
-
-
-def render_llm_sandbox_tab(res: Dict[str, Any]) -> None:
-    doc: Document = res["document"]
-    redacted_text = res["redacted_text"]
-    ok, leaked = verify_zero_leakage(res["entities"], redacted_text)
-
-    st.markdown("#### Simulated Downstream LLM Agent - Cadence Document Analysis")
-    st.caption("Exactly what reaches the LLM context window - proof that semantic context is preserved "
-               "with 0% exposure to real personal data.")
-    st.markdown("**Payload dispatched to the agent:**")
-    st.code(redacted_text or "(empty document)", language=None)
-
-    tags = sorted({r.replacement for r in res["redactions"]})
-    first_person = next((r.replacement for r in res["redactions"] if r.entity_type == "PERSON"), "[PERSON_01]")
-    first_emp = next((r.replacement for r in res["redactions"] if r.entity_type == "EMPLOYEE_ID"), "[EMP_ID_01]")
-    first_email = next((r.replacement for r in res["redactions"] if r.entity_type == "EMAIL_ADDRESS"), "[EMAIL_01]")
-    counts = res["report"].get("counts_by_type", {})
-    tag_summary = ", ".join(f"{TAG_PREFIX.get(k, k)} x{v}" for k, v in sorted(counts.items()))
-
-    simulated = f"""DOCUMENT ANALYSIS - {doc.filename}
-Artifact type: {doc.file_type.upper()} | structural blocks analyzed: {len(doc.blocks)}
-Pseudonymized identities referenced: {tag_summary if tags else 'none'}
-Primary reviewer: {first_person} (employee record {first_emp}, contact {first_email})
-
-SUMMARY
-The document was reviewed and approved by {first_person}. All {len(tags)} PII
-reference(s) appear only as opaque deterministic placeholders, so this analysis is
-performed with zero raw personal data in the context window. Content, control
-language, dates (non-PII) and structure are fully preserved for accurate summarization.
-EXPOSURE CHECK: 0 raw PII tokens present in context."""
-    st.markdown("**Agent response (simulated):**")
-    st.markdown(f'<div class="panel" style="white-space:pre-wrap;font-size:14px;line-height:1.7">{html.escape(simulated)}</div>',
-                unsafe_allow_html=True)
-
-    if ok:
-        st.markdown('<div class="shield">🛡 VERIFICATION PASSED - ZERO PII LEAKAGE - LLM READY</div>',
-                    unsafe_allow_html=True)
-    else:
-        st.markdown(f'<div class="shield shield-bad">⛔ Verification failed - {len(leaked)} residual token(s): '
-                    f'{html.escape(", ".join(leaked[:5]))}</div>', unsafe_allow_html=True)
+    st.download_button("⬇ Export Traceability (.csv)", records_to_csv(display_rows),
+                       file_name="traceability_log.csv", mime="text/csv")
 
 
 def render_artifact_workspace(type_filter: List[str]) -> None:
@@ -1157,41 +1341,35 @@ def render_artifact_workspace(type_filter: List[str]) -> None:
     if not results:
         return
     names = sorted(results.keys())
-    selected = st.selectbox("Per-Artifact Deep-Dive Workspace", names, index=len(names) - 1)
+    selected = st.selectbox("Select Active Document", names, index=len(names) - 1)
     res = apply_type_filter(results[selected], type_filter)
 
     head1, head2, head3 = st.columns([3, 2, 2])
-    head1.markdown(f"**Artifact:** `{selected}`")
-    head2.markdown(f"**Risk Level:** {risk_badge(res['report'].get('risk_level', 'NONE'))}",
-                   unsafe_allow_html=True)
-    head3.markdown(f"**PII found / redactions applied:** "
-                   f"{res['report'].get('total_pii_found', 0)} / {res['report'].get('total_redactions_applied', 0)}")
+    head1.markdown(f"**Document:** `{selected}`")
+    head2.markdown(f"**Risk Level:** {risk_badge(res['report'].get('risk_level', 'NONE'))}", unsafe_allow_html=True)
+    head3.markdown(f"**PII / Redactions:** {res['report'].get('total_pii_found', 0)} / {res['report'].get('total_redactions_applied', 0)}")
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "1 · Raw vs Redacted", "2 · Structure & OCR", "3 · Audit Report",
-        "4 · Traceability Vault", "5 · LLM Sandbox",
-    ])
+    tab1, tab2, tab3 = st.tabs(["Redaction & Downloads", "Audit Report", "Traceability"])
     with tab1:
-        render_comparison_tab(res)
+        render_comparison_tab(res, selected)
     with tab2:
-        render_structure_tab(res)
-    with tab3:
         render_audit_tab(res)
-    with tab4:
+    with tab3:
         render_traceability_tab(res)
-    with tab5:
-        render_llm_sandbox_tab(res)
 
 
 # --------------------------------------------------------------------------- #
 # 10. ENTRYPOINT
 # --------------------------------------------------------------------------- #
 def main() -> None:
-    st.set_page_config(page_title="Optiv x Cadence | PII Shield",
-                       page_icon="🛡", layout="wide",
-                       initial_sidebar_state="expanded")
+    st.set_page_config(page_title="Cadence | PII Shield", page_icon="🛡", layout="wide", initial_sidebar_state="expanded")
     if "results" not in st.session_state:
         st.session_state.results = {}
+    if "raw_files" not in st.session_state:
+        st.session_state.raw_files = {}
+    if "exports" not in st.session_state:
+        st.session_state.exports = {}
+
     inject_css()
     render_header()
     threshold, type_filter = render_sidebar()

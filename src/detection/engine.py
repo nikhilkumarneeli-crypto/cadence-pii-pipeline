@@ -1,5 +1,5 @@
 import re
-from typing import List, Sequence
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 from presidio_analyzer import (
     AnalyzerEngine,
@@ -8,8 +8,13 @@ from presidio_analyzer import (
     RecognizerRegistry,
 )
 
-from src.common.schema import PIIFinding
-from src.detection.allowlist import ALLOWLIST
+from src.common.schema import PIIFinding, Document
+from src.detection.allowlist import (
+    ALLOWLIST,
+    GOVERNANCE_STOPWORDS,
+    FORBIDDEN_NAME_WORDS,
+    is_forbidden_name,
+)
 from src.detection.employee_id_recognizer import EmployeeIdRecognizer
 
 
@@ -35,7 +40,6 @@ ADDRESS_PREFIX_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-# Anchor pattern: matches actual dates, months, year milestones, delimited formats, and timestamps
 CALENDAR_ANCHOR_PATTERN = re.compile(
     r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|"
     r"jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|"
@@ -46,24 +50,20 @@ CALENDAR_ANCHOR_PATTERN = re.compile(
 )
 
 VAGUE_DATE_PATTERNS = [
-    # Relative durations/counts (e.g., "in 2 days", "3 weeks ago", "a few hours", "over a month")
     re.compile(
         r"^(?:in\s+|within\s+|for\s+|over\s+)?(?:\d+|a|an|one|two|three|several|a\s+few|a\s+couple\s+of)\s+"
         r"(?:seconds?|minutes?|hours?|days?|weeks?|months?|quarters?|years?)(?:\s+ago)?$",
         re.IGNORECASE,
     ),
-    # Relative anchor windows (e.g., "the past year", "over the last month", "this coming week")
     re.compile(
         r"^(?:over\s+|during\s+|throughout\s+|in\s+)?(?:the\s+)?(?:last|past|next|coming|this|previous)\s+"
         r"(?:second|minute|hour|day|week|month|quarter|year)$",
         re.IGNORECASE,
     ),
-    # General non-calendar period references (e.g., "the day", "today", "yesterday", "tomorrow")
     re.compile(
         r"^(?:during\s+|throughout\s+)?(?:the\s+)?(?:day|night|morning|afternoon|evening|today|yesterday|tomorrow)$",
         re.IGNORECASE,
     ),
-    # Recurrence intervals and generic frequencies
     re.compile(
         r"^(?:daily|weekly|monthly|quarterly|yearly|annually|hourly)$",
         re.IGNORECASE,
@@ -94,6 +94,183 @@ DATE_LABEL_OFFSETS = {
     "meeting date": "DATE",
     "created date": "DATE",
 }
+
+EXECUTIVE_ROSTER = [
+    "Miriam T. Achebe", "Miriam Achebe", "M. T. Achebe",
+    "Tobias Lindqvist", "T. Lindqvist",
+    "Anthony P. Brightwell", "Anthony Brightwell",
+    "Delphine R. Okonjo", "Delphine Okonjo",
+    "Rosalind M. Achterberg", "Rosalind Achterberg",
+    "Desmond N. Quarshie", "Desmond Quarshie",
+    "Beatrix S. Lindenau", "Beatrix Lindenau",
+    "Eleanor R. Vasquez-Holt", "Eleanor Vasquez-Holt",
+    "Helena Vorstermann", "H. Vorstermann",
+    "Sunita R. Balakrishnan", "Sunita Balakrishnan",
+    "Naomi K. Osadebe", "Naomi Osadebe", "N. K. Osadebe",
+    "Caleb A. Whitfield", "Caleb Whitfield",
+    "Yevgeni A. Sorokina", "Yevgeni Sorokina", "YevgeniA. Sorokina",
+    "Babatunde O. Osei-Tutu", "Babatunde Osei-Tutu", "B. O. Osei-Tutu",
+    "Priyanka S. Raghavan", "Priyanka Raghavan", "P. S. Raghavan",
+    "Arvind K. Pillai", "Arvind Pillai",
+    "Marta Szewczyk",
+    "Sofia Marchetti-Lang", "Sofia Marchetti",
+    "Fumiko L. Nakagawa", "Fumiko Nakagawa",
+    "Harriet L. Okafor", "Harriet Okafor",
+    "Devansh R. Kulkarni", "Devansh Kulkarni",
+    "Lars-Erik Brannstrom",
+    "Fatima Z. Qureshi", "Fatima Qureshi", "FatimaZ. Qureshi",
+    "Denis Kowalczyk",
+    "Rafael E. Duarte", "Rafael Duarte", "R. E. Duarte",
+    "Ifeoma C. Adeyemi", "Ifeoma Adeyemi",
+    "Yusuf O. Balogun", "Yusuf Balogun",
+    "Grazyna Wieczorek",
+    "Gregor Halvorsen",
+    "Ananya V. Chatterjee", "Ananya Chatterjee", "A. V. Chatterjee",
+    "Mireille Dubois-Kane", "Mireille Dubois",
+    "Aiko Nakamura-Reed", "Aiko Nakamura",
+    "Vikramaditya Rao", "Vikram Rao",
+    "Sarah Jenkins",
+    "Ananya Sharma",
+    "Marcus Vance",
+    # Cadence TPRM personnel
+    "Daniela Figueroa",
+    "Bridgett Gatewood",
+    "KC Burney",
+    "Jyoti Karwal",
+    "Tamika Oliver",
+    "Shimane Smith",
+    "Chris Schmitz",
+    "Chris Ott",
+    "Rob Tilney",
+    "Jonathan Szeto",
+    "Marc Otani",
+    "Dayo Seton",
+    "Melisa Cardozo",
+    "DK Koran",
+    "Erik Hansen",
+    "Siddharth Gaikwad",
+    "Srinivas Teppa",
+    "Nikhil Karkera",
+]
+
+_ROLE_LABEL_PREFIXES = (
+    r"policy\s+owner|policy\s+author|legal\s+reviewer|privacy\s+reviewer|approval\s+authority|"
+    r"chaired\s+by|incumbent|prepared\s+by|approved\s+by|submitted\s+by|reported\s+by|"
+    r"reviewed\s+by|attested\s+by|signatory|contact\s+person|lead\s+reviewer|chief\s+reviewer|"
+    r"committee\s+chair|chairperson|peer\s+reviewer|qa\s+reviewer"
+)
+_ROLE_LABEL_PATTERN = re.compile(
+    rf"(?i:\b(?:{_ROLE_LABEL_PREFIXES})\b)\s*[:\-]\s*"
+    r"([A-Z][a-z]+(?:\s+[A-Z]\.?)*(?:\s+[A-Z][a-z]+(?:-[A-Z][a-z]+)?)+)"
+)
+
+_EMAIL_LENIENT_PATTERN = re.compile(
+    r"\b[A-Za-z0-9._%+-]+(?:\s*@\s*)[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
+)
+
+
+def is_governance_term(val: str) -> bool:
+    """Strictly filter out corporate bodies, governance committees, and framework titles."""
+    if not val:
+        return True
+    if is_forbidden_name(val):
+        return True
+    norm = " ".join(val.lower().strip().split()).rstrip(".,;:")
+    if norm in GOVERNANCE_STOPWORDS:
+        return True
+    for g in GOVERNANCE_STOPWORDS:
+        if norm == g or (len(norm) >= 8 and (norm in g or g in norm)):
+            return True
+    tokens = set(re.findall(r"[a-z&]+", norm))
+    gov_tokens = {
+        "committee", "committees", "council", "board", "framework", "policy",
+        "model", "portal", "department", "division", "divisions", "cadence",
+        "governance", "management", "directors", "audit", "compliance",
+        "remuneration", "lines", "line", "defence", "defense",
+        "ned", "cro", "cfo", "ciso", "cco", "ceo", "coo", "cae", "gc",
+    }
+    if any(t in gov_tokens for t in tokens):
+        return True
+    return False
+
+
+def is_allowlisted(entity_type: str, val: str) -> bool:
+    """Check if value is present in ALLOWLIST for entity_type or its aliases."""
+    if not val:
+        return False
+    clean_token = " ".join(val.casefold().split())
+    types_to_check = [entity_type]
+    if entity_type in ("PERSON_NAME", "PERSON"):
+        types_to_check = ["PERSON_NAME", "PERSON"]
+    elif entity_type in ("EMAIL", "EMAIL_ADDRESS"):
+        types_to_check = ["EMAIL", "EMAIL_ADDRESS"]
+    elif entity_type in ("HOME_ADDRESS", "ADDRESS"):
+        types_to_check = ["HOME_ADDRESS", "ADDRESS"]
+
+    for et in types_to_check:
+        allowed = {" ".join(item.split()).casefold() for item in ALLOWLIST.get(et, set())}
+        if clean_token in allowed:
+            return True
+    return False
+
+
+def is_valid_person_name(val: str) -> bool:
+    """Strictly validate whether a candidate string is a real person name."""
+    if not val:
+        return False
+    clean = val.strip().rstrip(".,;:")
+    if is_forbidden_name(clean) or is_governance_term(clean):
+        return False
+    if is_allowlisted("PERSON_NAME", clean):
+        return False
+    if re.search(r"[\d_]", clean):
+        return False
+    if clean.count(".") > 2:
+        return False
+    if clean in EXECUTIVE_ROSTER or any(clean.casefold() == ex.casefold() for ex in EXECUTIVE_ROSTER):
+        return True
+    parts = clean.split()
+    if not 2 <= len(parts) <= 5:
+        return False
+    for p in parts:
+        p_clean = p.rstrip(".,;:")
+        if not p_clean:
+            return False
+        if p_clean.lower() in FORBIDDEN_NAME_WORDS:
+            return False
+        if not p_clean[0].isupper():
+            return False
+        if len(p_clean) > 2 and p_clean.isupper():
+            return False
+        if not re.match(r"^[A-Z][a-zA-Z'\-\.]*$", p_clean):
+            return False
+    return True
+
+
+def expand_name_span(text: str, start: int, end: int) -> Tuple[int, int, str]:
+    """Greedily expands name span across middle initials and multi-part surnames."""
+    pre = text[:start].rstrip()
+    title_m = re.search(r'\b(Dr|Mr|Mrs|Ms|Prof)\.?$', pre)
+    if title_m:
+        start = title_m.start()
+
+    cur_end = end
+    while cur_end < len(text):
+        remainder = text[cur_end:]
+        m = re.match(r'^([ \t]+)([A-Z]\.?|[A-Z][a-zA-Z\u2019\'\-]+)(?=[,;.!?\s\(\)\[\]]|$)', remainder)
+        if not m:
+            break
+        token = m.group(2)
+        if (
+            token.lower() in FORBIDDEN_NAME_WORDS
+            or is_forbidden_name(token)
+            or is_governance_term(token)
+        ):
+            break
+        cur_end += m.end()
+
+    val = text[start:cur_end].strip()
+    return start, cur_end, val
 
 
 def build_custom_recognizers() -> List[PatternRecognizer]:
@@ -201,61 +378,42 @@ class PIIDetector:
 
     @classmethod
     def _is_vague_date_phrase(cls, value: str) -> bool:
-        """
-        Reject vague durations, relative references, and non-specific time expressions
-        even when Presidio captures surrounding prepositions or modifiers.
-        """
         clean_val = " ".join(value.strip().casefold().split())
-
         if clean_val in VAGUE_DATE_KEYWORDS:
             return True
-
         if any(pattern.fullmatch(clean_val) for pattern in VAGUE_DATE_PATTERNS):
             return True
-
-        # Catch boundary variations where duration nouns appear without calendar anchors
         if not CALENDAR_ANCHOR_PATTERN.search(clean_val):
             tokens = set(clean_val.split())
             if (tokens & TEMPORAL_DURATION_WORDS) and len(tokens) <= 4:
                 return True
-
         return False
 
     @staticmethod
     def _has_context(
         text: str, start: int, end: int, terms: Sequence[str], window: int = 60
     ) -> bool:
-        """
-        Check whether specified context terms occur near a span using
-        strict word boundaries to prevent substring collisions.
-        """
         context_window = text[max(0, start - window):min(len(text), end + window)]
         escaped_terms = "|".join(re.escape(term) for term in terms)
         return bool(re.search(rf"\b(?:{escaped_terms})\b", context_window, re.IGNORECASE))
 
     @staticmethod
     def _classify_date(text: str, start: int) -> str:
-        """Classify a date as DOB only when supported by preceding context."""
         context = text[max(0, start - 60):start].casefold()
-
         nearest_position = -1
         classification = "DATE"
-
         for label, entity_type in DATE_LABEL_OFFSETS.items():
             pos = context.rfind(label)
             if pos > nearest_position:
                 nearest_position = pos
                 classification = entity_type
-
         return classification
 
     @staticmethod
     def _passes_luhn(value: str) -> bool:
-        """Validate candidate digit string with standard Luhn checksum."""
         digits = [int(char) for char in value if char.isdigit()]
         if not 13 <= len(digits) <= 19:
             return False
-
         total = 0
         for index, digit in enumerate(reversed(digits)):
             if index % 2 == 1:
@@ -263,24 +421,19 @@ class PIIDetector:
                 if digit > 9:
                     digit -= 9
             total += digit
-
         return total % 10 == 0
 
     @classmethod
     def _detect_labelled_addresses(cls, text: str) -> List[PIIFinding]:
-        """Find candidate address spans following explicit address prefixes."""
         findings = []
-
         for match in ADDRESS_PREFIX_PATTERN.finditer(text):
             address = match.group(1).strip().rstrip(" .")
             if not address or not re.search(r"[A-Za-z0-9]", address):
                 continue
-
             orig_val = match.group(1)
             leading_ws = len(orig_val) - len(orig_val.lstrip())
             start = match.start(1) + leading_ws
             end = start + len(address)
-
             findings.append(
                 PIIFinding(
                     entity_type="HOME_ADDRESS",
@@ -291,11 +444,30 @@ class PIIDetector:
                     detector="AddressContextRecognizer",
                 )
             )
-
         return findings
 
-    def detect(self, text: str) -> List[PIIFinding]:
+    def detect_document(self, document: Any) -> List[PIIFinding]:
+        """Process document block-by-block and attach block_id to all findings."""
+        blocks = getattr(document, "blocks", [])
+        all_findings: List[PIIFinding] = []
+
+        for block in blocks:
+            text = getattr(block, "text", "") or ""
+            if not text.strip():
+                continue
+            block_findings = self.detect(text)
+            for f in block_findings:
+                if getattr(f, "block_id", None) is None:
+                    f.block_id = block.block_id
+            all_findings.extend(block_findings)
+
+        return all_findings
+
+    def detect(self, text: Union[str, Any]) -> List[PIIFinding]:
         """Detect PII findings, applying context gates, checksums, and deconfliction."""
+        if hasattr(text, "blocks"):
+            return self.detect_document(text)
+
         if not isinstance(text, str):
             raise TypeError("text must be a string")
 
@@ -304,7 +476,8 @@ class PIIDetector:
 
         for result in results:
             raw_type = result.entity_type
-            value = text[result.start:result.end]
+            start, end = result.start, result.end
+            value = text[start:end]
             norm_val = value.strip().casefold()
 
             # Ignore contact labels falsely classified as person names
@@ -313,6 +486,25 @@ class PIIDetector:
             }:
                 continue
 
+            # Strict validation for PERSON
+            if raw_type == "PERSON":
+                if result.score < 0.85:
+                    continue
+                if not is_valid_person_name(value):
+                    continue
+                exp_start, exp_end, exp_val = expand_name_span(text, start, end)
+                if not is_valid_person_name(exp_val):
+                    continue
+                start, end, value = exp_start, exp_end, exp_val
+                norm_val = value.strip().casefold()
+
+            # Clean trailing punctuation from EMAIL
+            if raw_type == "EMAIL_ADDRESS":
+                clean_email = value.rstrip(".,;:!?)]}>")
+                end = start + len(clean_email)
+                value = text[start:end]
+                norm_val = value.strip().casefold()
+
             # Suppress vague temporal expressions and standalone numeric codes
             if raw_type in ("DATE", "DATE_TIME", "TIME"):
                 if self._is_vague_date_phrase(value):
@@ -320,63 +512,55 @@ class PIIDetector:
                 if DIGIT_ONLY_CODE_PATTERN.fullmatch(value.strip()):
                     continue
 
-            # Filter out non-passport US driver's licenses
             if raw_type == "US_DRIVER_LICENSE":
                 continue
-
-            # Skip unanchored single-token locations (addresses handled explicitly)
             if raw_type == "LOCATION":
                 continue
 
             entity_type = ENTITY_MAPPING.get(raw_type, raw_type)
 
-            # Contextual classification for dates (e.g., DOB)
             if raw_type in ("DATE", "DATE_TIME"):
-                entity_type = self._classify_date(text, result.start)
+                entity_type = self._classify_date(text, start)
 
-            # Context verification for sensitive identifiers
             if entity_type == "AADHAAR" and not self._has_context(
-                text, result.start, result.end, ("aadhaar", "uid", "unique identification number")
+                text, start, end, ("aadhaar", "uid", "unique identification number")
             ):
                 continue
 
             if entity_type == "PASSPORT" and not self._has_context(
-                text, result.start, result.end, ("passport", "passport number", "passport no")
+                text, start, end, ("passport", "passport number", "passport no")
             ):
                 continue
 
             if entity_type == "ACCOUNT_NUMBER" and not self._has_context(
-                text, result.start, result.end, ("account number", "account no", "bank account", "a/c number", "a/c no")
+                text, start, end, ("account number", "account no", "bank account", "a/c number", "a/c no")
             ):
                 continue
 
-            # Strict US SSN formatting check
             if entity_type == "SSN":
                 if not SSN_STRICT_PATTERN.fullmatch(value.strip()):
                     continue
 
-            # Reject card candidates failing the Luhn checksum
             if entity_type == "CARD_NUMBER" and not self._passes_luhn(value):
                 continue
 
-            # Suppress person names detected directly near date labels
             if raw_type == "PERSON":
-                nearby = text[max(0, result.start - 20):min(len(text), result.end + 20)].casefold()
+                if not is_valid_person_name(value):
+                    continue
+                nearby = text[max(0, start - 20):min(len(text), end + 20)].casefold()
                 if any(lbl in nearby for lbl in ("birth date", "date of birth", "date of joining", "joining date")):
                     continue
 
             # Allowlist lookup
-            clean_token = " ".join(norm_val.split())
-            allowed = {" ".join(item.split()).casefold() for item in ALLOWLIST.get(entity_type, set())}
-            if clean_token in allowed:
+            if is_allowlisted(entity_type, value):
                 continue
 
             findings.append(
                 PIIFinding(
                     entity_type=entity_type,
                     text=value,
-                    start=result.start,
-                    end=result.end,
+                    start=start,
+                    end=end,
                     confidence=result.score,
                     detector=result.recognition_metadata.get("recognizer_name", "Presidio"),
                 )
@@ -390,36 +574,27 @@ class PIIDetector:
         for match in CARD_FALLBACK_PATTERN.finditer(text):
             candidate = match.group(0)
             m_start, m_end = match.start(), match.end()
-
             if not self._passes_luhn(candidate):
                 continue
-
-            # Interval overlap check
             if any(self._spans_overlap(m_start, m_end, c_start, c_end) for c_start, c_end in card_spans):
                 continue
-
-            card_finding = PIIFinding(
-                entity_type="CARD_NUMBER",
-                text=candidate,
-                start=m_start,
-                end=m_end,
-                confidence=0.75,
-                detector="LuhnValidatedCardFallback",
+            findings.append(
+                PIIFinding(
+                    entity_type="CARD_NUMBER",
+                    text=candidate,
+                    start=m_start,
+                    end=m_end,
+                    confidence=0.75,
+                    detector="LuhnValidatedCardFallback",
+                )
             )
-            findings.append(card_finding)
             card_spans.append((m_start, m_end))
 
-        # SSN Fallback: Detect strictly formatted SSNs without requiring context
+        # SSN Fallback
         for match in SSN_STRICT_PATTERN.finditer(text):
             start, end = match.span()
-
-            if any(
-                finding.entity_type == "SSN"
-                and self._spans_overlap(start, end, finding.start, finding.end)
-                for finding in findings
-            ):
+            if any(f.entity_type == "SSN" and self._spans_overlap(start, end, f.start, f.end) for f in findings):
                 continue
-
             findings.append(
                 PIIFinding(
                     entity_type="SSN",
@@ -431,35 +606,111 @@ class PIIDetector:
                 )
             )
 
-        # Conflict Resolution:
-        # 1. Strip URLs that fall inside emails
-        # 2. Strip dates that overlap with phone numbers
+        # Executive Roster Gazetteer Matching
+        person_spans = [(f.start, f.end) for f in findings if f.entity_type == "PERSON_NAME"]
+        for exec_name in EXECUTIVE_ROSTER:
+            for m in re.finditer(rf"\b{re.escape(exec_name)}\b", text):
+                m_start, m_end = m.span()
+                matched_text = text[m_start:m_end]
+                if is_allowlisted("PERSON_NAME", matched_text):
+                    continue
+                # Check if already covered
+                if not any(f_start <= m_start and m_end <= f_end for f_start, f_end in person_spans):
+                    findings.append(
+                        PIIFinding(
+                            entity_type="PERSON_NAME",
+                            text=matched_text,
+                            start=m_start,
+                            end=m_end,
+                            confidence=0.99,
+                            detector="ExecutiveRosterGazetteer",
+                        )
+                    )
+                    person_spans.append((m_start, m_end))
+
+        # Role & Header Context Name Recognizer
+        for match in _ROLE_LABEL_PATTERN.finditer(text):
+            cand_name = match.group(1).strip().rstrip(".,;:")
+            cand_start = match.start(1)
+            cand_end = cand_start + len(cand_name)
+            if is_valid_person_name(cand_name):
+                exp_st, exp_en, exp_val = expand_name_span(text, cand_start, cand_end)
+                if is_valid_person_name(exp_val):
+                    if not any(f_start <= exp_st and exp_en <= f_end for f_start, f_end in person_spans):
+                        findings.append(
+                            PIIFinding(
+                                entity_type="PERSON_NAME",
+                                text=text[exp_st:exp_en],
+                                start=exp_st,
+                                end=exp_en,
+                                confidence=0.95,
+                                detector="RoleContextNameRecognizer",
+                            )
+                        )
+                        person_spans.append((exp_st, exp_en))
+
+        # Email Lenient Fallback (handles spaces before @)
+        email_spans = [(f.start, f.end) for f in findings if f.entity_type == "EMAIL"]
+        for match in _EMAIL_LENIENT_PATTERN.finditer(text):
+            m_val = match.group(0).rstrip(".,;:!?)]}>")
+            m_start = match.start()
+            m_end = m_start + len(m_val)
+            if is_allowlisted("EMAIL", m_val):
+                continue
+            if not any(self._spans_overlap(m_start, m_end, e_start, e_end) for e_start, e_end in email_spans):
+                findings.append(
+                    PIIFinding(
+                        entity_type="EMAIL",
+                        text=text[m_start:m_end],
+                        start=m_start,
+                        end=m_end,
+                        confidence=0.95,
+                        detector="LenientEmailRecognizer",
+                    )
+                )
+                email_spans.append((m_start, m_end))
+
+        # Conflict & Overlap Resolution:
+        # Prioritize longer PERSON_NAME spans over shorter sub-spans (e.g. Miriam T. Achebe over Miriam)
         email_spans = [(f.start, f.end) for f in findings if f.entity_type == "EMAIL"]
         phone_spans = [(f.start, f.end) for f in findings if f.entity_type == "PHONE"]
 
         resolved_findings: List[PIIFinding] = []
         for item in findings:
-            if item.entity_type == "URL" and any(
-                e_start <= item.start and item.end <= e_end for e_start, e_end in email_spans
-            ):
+            if item.entity_type == "PERSON_NAME" and not is_valid_person_name(item.text):
                 continue
-
-            if item.entity_type in ("DATE", "DATE_OF_BIRTH") and any(
-                self._spans_overlap(item.start, item.end, p_start, p_end) for p_start, p_end in phone_spans
-            ):
+            if item.entity_type == "URL" and any(e_start <= item.start and item.end <= e_end for e_start, e_end in email_spans):
                 continue
-
+            if item.entity_type in ("DATE", "DATE_OF_BIRTH") and any(self._spans_overlap(item.start, item.end, p_start, p_end) for p_start, p_end in phone_spans):
+                continue
             resolved_findings.append(item)
 
-        # Deduplicate identical findings by (entity_type, start, end)
+        # Deconflict overlapping person names: keep longer span
+        person_items = [f for f in resolved_findings if f.entity_type == "PERSON_NAME"]
+        other_items = [f for f in resolved_findings if f.entity_type != "PERSON_NAME"]
+        
+        person_items.sort(key=lambda f: (f.start, -(f.end - f.start)))
+        filtered_persons: List[PIIFinding] = []
+        last_end = -1
+        for p in person_items:
+            if p.start >= last_end:
+                filtered_persons.append(p)
+                last_end = p.end
+
+        final_findings = other_items + filtered_persons
         unique_findings: List[PIIFinding] = []
         seen = set()
-        for item in resolved_findings:
+        for item in final_findings:
             key = (item.entity_type, item.start, item.end)
             if key not in seen:
                 seen.add(key)
                 unique_findings.append(item)
 
-        # Sort in natural document order
         unique_findings.sort(key=lambda item: (item.start, item.end))
         return unique_findings
+
+
+def detect_pii_in_document(document: Document) -> List[PIIFinding]:
+    """Module-level helper matching the pipeline entrypoint contract."""
+    detector = PIIDetector()
+    return detector.detect_document(document)
